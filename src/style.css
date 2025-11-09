@@ -341,6 +341,49 @@ textarea {
   margin-top: 1rem;
 }
 
+/* Date choice section */
+.date-choice-section {
+  margin: 1.5rem 0;
+}
+
+.radio-group {
+  margin-bottom: 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.radio-group:has(input[type="radio"]:checked) {
+  border-color: var(--primary-color);
+  background-color: var(--bg-light);
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.radio-option input[type="radio"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+.date-input {
+  display: none;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.date-input.active {
+  display: block;
+}
+
 /* Footer */
 footer {
   background: var(--bg-white);

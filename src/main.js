@@ -9,21 +9,33 @@ import {
   addAppointment,
   deleteAppointment,
   loadWeightHistory,
-  addWeight
+  addWeight,
+  isOnboardingComplete,
+  setOnboardingComplete
 } from './storage.js';
 
 import {
   calculatePregnancyWeek,
   getWeekDescription,
   formatDaysRemaining,
-  formatWeekDisplay
+  formatWeekDisplay,
+  calculateDueDateFromLMP
 } from './pregnancy.js';
 
 import { getDailyTip } from './tips.js';
 
+// Track if this is first-time setup
+let isFirstTimeSetup = false;
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
-  initializeApp();
+  // Check if this is the first time opening the app
+  if (!isOnboardingComplete()) {
+    isFirstTimeSetup = true;
+    showOnboardingModal();
+  } else {
+    initializeApp();
+  }
   setupEventListeners();
 });
 
@@ -68,10 +80,30 @@ function loadPregnancyTracker() {
   }
 }
 
-// Setup Modal
+// Onboarding Modal (first-time setup)
+function showOnboardingModal() {
+  const modal = document.getElementById('setup-modal');
+  const cancelBtn = document.getElementById('cancel-setup');
+  
+  // Hide cancel button during onboarding
+  cancelBtn.style.display = 'none';
+  
+  // Clear any existing values
+  document.getElementById('name').value = '';
+  document.getElementById('due-date').value = '';
+  document.getElementById('lmp-date').value = '';
+  
+  modal.classList.remove('hidden');
+}
+
+// Setup Modal (edit mode)
 function showSetupModal() {
   const modal = document.getElementById('setup-modal');
   const pregnancyInfo = loadPregnancyInfo();
+  const cancelBtn = document.getElementById('cancel-setup');
+  
+  // Show cancel button in edit mode
+  cancelBtn.style.display = 'block';
   
   if (pregnancyInfo) {
     document.getElementById('due-date').value = pregnancyInfo.dueDate;
@@ -84,22 +116,80 @@ function showSetupModal() {
 function hideSetupModal() {
   const modal = document.getElementById('setup-modal');
   modal.classList.add('hidden');
+  
+  // Reset first-time setup flag
+  if (isFirstTimeSetup) {
+    isFirstTimeSetup = false;
+  }
 }
 
 function setupEventListeners() {
+  // Radio button listeners for date choice
+  const radioButtons = document.querySelectorAll('input[name="date-type"]');
+  radioButtons.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      // Hide all date inputs
+      document.querySelectorAll('.date-input').forEach(input => {
+        input.classList.remove('active');
+        input.removeAttribute('required');
+      });
+      
+      // Show the selected date input
+      const selectedValue = e.target.value;
+      const selectedInput = document.getElementById(selectedValue);
+      selectedInput.classList.add('active');
+      selectedInput.setAttribute('required', 'required');
+    });
+  });
+  
   // Setup form
   const setupForm = document.getElementById('setup-form');
   setupForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const dueDate = document.getElementById('due-date').value;
-    const name = document.getElementById('name').value;
+    
+    const name = document.getElementById('name').value.trim();
+    const dateType = document.querySelector('input[name="date-type"]:checked').value;
+    let dueDate;
+    
+    if (dateType === 'due-date') {
+      dueDate = document.getElementById('due-date').value;
+    } else {
+      // Calculate due date from LMP
+      const lmpDate = document.getElementById('lmp-date').value;
+      dueDate = calculateDueDateFromLMP(lmpDate);
+    }
+    
+    // Validate inputs
+    if (!name) {
+      alert('Veuillez entrer votre prénom');
+      return;
+    }
+    
+    if (!dueDate) {
+      alert('Veuillez sélectionner une date');
+      return;
+    }
     
     savePregnancyInfo({ dueDate, name });
+    
+    // Mark onboarding as complete if this is first time
+    if (isFirstTimeSetup) {
+      setOnboardingComplete();
+      isFirstTimeSetup = false;
+      // Initialize the app after first-time setup
+      initializeApp();
+    }
+    
     hideSetupModal();
     loadPregnancyTracker();
   });
   
-  document.getElementById('cancel-setup').addEventListener('click', hideSetupModal);
+  document.getElementById('cancel-setup').addEventListener('click', () => {
+    // Only allow cancel if not first-time setup
+    if (!isFirstTimeSetup) {
+      hideSetupModal();
+    }
+  });
   
   // Notes
   document.getElementById('add-note-btn').addEventListener('click', () => {

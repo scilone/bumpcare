@@ -6,7 +6,8 @@ const STORAGE_KEYS = {
   NOTES: 'bumpcare_notes',
   APPOINTMENTS: 'bumpcare_appointments',
   WEIGHT_HISTORY: 'bumpcare_weight',
-  SETTINGS: 'bumpcare_settings'
+  SETTINGS: 'bumpcare_settings',
+  ONBOARDING_COMPLETE: 'bumpcare_onboarding_complete'
 };
 
 // Generic storage functions
@@ -143,6 +144,15 @@ export function saveSettings(settings) {
 
 export function loadSettings() {
   return loadData(STORAGE_KEYS.SETTINGS) || {};
+}
+
+// Onboarding
+export function isOnboardingComplete() {
+  return loadData(STORAGE_KEYS.ONBOARDING_COMPLETE) === true;
+}
+
+export function setOnboardingComplete() {
+  return saveData(STORAGE_KEYS.ONBOARDING_COMPLETE, true);
 }
 
 // Clear all data (for testing or reset)
