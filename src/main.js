@@ -187,12 +187,13 @@ function setupEventListeners() {
     const name = document.getElementById('name').value.trim();
     const dateType = document.querySelector('input[name="date-type"]:checked').value;
     let dueDate;
+    let lmpDate = null;
     
     if (dateType === 'due-date') {
       dueDate = document.getElementById('due-date').value;
     } else {
       // Calculate due date from LMP
-      const lmpDate = document.getElementById('lmp-date').value;
+      lmpDate = document.getElementById('lmp-date').value;
       dueDate = calculateDueDateFromLMP(lmpDate);
     }
     
@@ -207,7 +208,7 @@ function setupEventListeners() {
       return;
     }
     
-    savePregnancyInfo({ dueDate, name });
+    savePregnancyInfo({ dueDate, name, lmpDate });
     
     // Mark onboarding as complete if this is first time
     if (isFirstTimeSetup) {
@@ -258,6 +259,7 @@ function setupEventListeners() {
   
   // Close week modal
   document.getElementById('close-week-modal').addEventListener('click', hideWeekModal);
+  document.getElementById('week-modal-overlay').addEventListener('click', hideWeekModal);
   
   // Weight tracking
   const handleWeightSubmit = () => {
@@ -374,7 +376,7 @@ function loadCalendarView() {
            data-week-start="${week.startDate.toISOString()}"
            data-week-end="${week.endDate.toISOString()}"
            onclick="window.showWeekDetailsHandler('${week.startDate.toISOString()}', '${week.endDate.toISOString()}')">
-        <div class="week-number">S${week.weekNumber}</div>
+        <div class="week-number">S${week.pregnancyWeek}</div>
         <div class="week-month">${monthName}</div>
         ${hasAppointments ? '<div class="week-indicator"></div>' : ''}
       </div>
@@ -420,6 +422,7 @@ function showWeekDetails(weekStartISO, weekEndISO) {
           <p><strong>Trimestre:</strong> ${trimesterText}</p>
           <p><strong>Semaine de grossesse:</strong> Semaine ${pregnancyInfo.weeks} + ${pregnancyInfo.days} jour${pregnancyInfo.days > 1 ? 's' : ''}</p>
           <p><strong>SA (Semaines d'Aménorrhée):</strong> ${pregnancyInfo.weeks + 2} SA</p>
+          <p><strong>SG (Semaines de Grossesse):</strong> ${pregnancyInfo.weeks} SG</p>
         </div>
       </div>
       

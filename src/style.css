@@ -607,6 +607,15 @@ textarea {
   display: none;
 }
 
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
 .modal-content {
   background: white;
   padding: 2rem;
@@ -614,6 +623,8 @@ textarea {
   max-width: 500px;
   width: 100%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1001;
 }
 
 .modal-content h2 {

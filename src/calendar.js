@@ -4,30 +4,44 @@ import { calculatePregnancyWeek, getTrimester } from './pregnancy.js';
 import { loadPregnancyInfo, loadAppointments } from './storage.js';
 import { getBabyDevelopment } from './babyDevelopment.js';
 
-// Get all weeks in the current year for display
+// Get all weeks from LMP to due date
 export function getWeeksInYear() {
-  const now = new Date();
-  const year = now.getFullYear();
+  const pregnancyInfo = loadPregnancyInfo();
+  
+  // If no pregnancy info, return empty array
+  if (!pregnancyInfo || !pregnancyInfo.dueDate) {
+    return [];
+  }
+  
+  // Get LMP date or calculate it from due date
+  let lmpDate;
+  if (pregnancyInfo.lmpDate) {
+    lmpDate = new Date(pregnancyInfo.lmpDate);
+  } else {
+    const dueDate = new Date(pregnancyInfo.dueDate);
+    lmpDate = new Date(dueDate);
+    lmpDate.setDate(dueDate.getDate() - 280);
+  }
+  
+  const dueDate = new Date(pregnancyInfo.dueDate);
   const weeks = [];
   
-  // Start from the first day of the year
-  let currentDate = new Date(year, 0, 1);
-  
-  // Find the first Monday of the year (or use Jan 1 if it's a Monday)
+  // Start from the Monday of the LMP week
+  let currentDate = new Date(lmpDate);
   const dayOfWeek = currentDate.getDay();
-  const daysUntilMonday = dayOfWeek === 0 ? 1 : (1 - dayOfWeek + 7) % 7;
+  const daysUntilMonday = dayOfWeek === 0 ? -6 : (1 - dayOfWeek);
   currentDate.setDate(currentDate.getDate() + daysUntilMonday);
   
-  // Generate weeks for the entire year
-  while (currentDate.getFullYear() === year || weeks.length < 52) {
+  // Generate weeks from LMP to due date
+  let weekCounter = 1;
+  while (currentDate <= dueDate) {
     const weekStart = new Date(currentDate);
     const weekEnd = new Date(currentDate);
     weekEnd.setDate(weekEnd.getDate() + 6);
     
-    const weekNumber = getWeekNumber(weekStart);
-    
     weeks.push({
-      weekNumber,
+      weekNumber: weekCounter,
+      pregnancyWeek: weekCounter,
       startDate: new Date(weekStart),
       endDate: new Date(weekEnd),
       month: weekStart.getMonth()
@@ -35,11 +49,7 @@ export function getWeeksInYear() {
     
     // Move to next week
     currentDate.setDate(currentDate.getDate() + 7);
-    
-    // Stop if we've moved to the next year
-    if (currentDate.getFullYear() > year && weeks.length >= 52) {
-      break;
-    }
+    weekCounter++;
   }
   
   return weeks;

@@ -43,6 +43,13 @@ export function deleteData(key) {
 
 // Pregnancy Info
 export function savePregnancyInfo(info) {
+  // Calculate and store LMP if not provided but dueDate is available
+  if (info.dueDate && !info.lmpDate) {
+    const dueDate = new Date(info.dueDate);
+    const lmp = new Date(dueDate);
+    lmp.setDate(dueDate.getDate() - 280);
+    info.lmpDate = lmp.toISOString().split('T')[0];
+  }
   return saveData(STORAGE_KEYS.PREGNANCY_INFO, info);
 }
 
