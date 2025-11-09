@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="description" content="Application pour accompagner les femmes enceintes">
+  <meta name="theme-color" content="#FF6B9D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="BumpCare">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <title>BumpCare - Accompagnement Grossesse</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🤰 BumpCare</h1>
+      <p class="tagline">Votre compagnon de grossesse</p>
+    </header>
+
+    <main>
+      <!-- Section d'information de grossesse -->
+      <section class="card pregnancy-info">
+        <h2>Ma Grossesse</h2>
+        <div id="pregnancy-tracker">
+          <div class="setup-prompt">
+            <p>Commencez votre suivi de grossesse</p>
+            <button id="setup-btn" class="primary-btn">Configurer</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section de notes journalières -->
+      <section class="card">
+        <h2>📝 Mes Notes</h2>
+        <div id="notes-section">
+          <textarea id="note-input" placeholder="Notez vos pensées, symptômes, questions..."></textarea>
+          <button id="add-note-btn" class="primary-btn">Ajouter une note</button>
+          <div id="notes-list"></div>
+        </div>
+      </section>
+
+      <!-- Section de rendez-vous -->
+      <section class="card">
+        <h2>📅 Mes Rendez-vous</h2>
+        <div id="appointments-section">
+          <div class="appointment-form">
+            <input type="date" id="appointment-date" placeholder="Date">
+            <input type="time" id="appointment-time" placeholder="Heure">
+            <input type="text" id="appointment-note" placeholder="Note (ex: Échographie)">
+            <button id="add-appointment-btn" class="primary-btn">Ajouter</button>
+          </div>
+          <div id="appointments-list"></div>
+        </div>
+      </section>
+
+      <!-- Section de suivi santé -->
+      <section class="card">
+        <h2>💪 Suivi Santé</h2>
+        <div id="health-tracking">
+          <div class="health-item">
+            <label>Poids (kg)</label>
+            <input type="number" id="weight-input" step="0.1">
+            <button id="add-weight-btn" class="secondary-btn">Enregistrer</button>
+          </div>
+          <div id="weight-history"></div>
+        </div>
+      </section>
+
+      <!-- Section de conseils -->
+      <section class="card">
+        <h2>💡 Conseils du jour</h2>
+        <div id="tips-section">
+          <p class="tip"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>BumpCare - Données stockées localement sur votre appareil</p>
+      <p class="version">v1.0.0</p>
+    </footer>
+  </div>
+
+  <!-- Modal de configuration -->
+  <div id="setup-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Configuration de votre grossesse</h2>
+      <form id="setup-form">
+        <label for="due-date">Date prévue d'accouchement</label>
+        <input type="date" id="due-date" required>
+        
+        <label for="name">Votre prénom (optionnel)</label>
+        <input type="text" id="name" placeholder="Prénom">
+        
+        <div class="modal-actions">
+          <button type="submit" class="primary-btn">Enregistrer</button>
+          <button type="button" id="cancel-setup" class="secondary-btn">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

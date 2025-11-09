@@ -1,0 +1,23 @@
+{
+  "name": "bumpcare",
+  "version": "1.0.0",
+  "description": "Application web pour accompagner les femmes enceintes",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "pwa",
+    "pregnancy",
+    "health"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "canvas": "^3.2.0",
+    "vite": "^7.2.2",
+    "vite-plugin-pwa": "^1.1.0"
+  }
+}
