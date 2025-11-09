@@ -34,27 +34,15 @@
 
       <!-- Navigation par onglets -->
       <div class="tabs-navigation">
-        <button class="tab-btn active" data-tab="notes">📝 Notes</button>
-        <button class="tab-btn" data-tab="appointments">📅 Rendez-vous</button>
+        <button class="tab-btn active" data-tab="appointments">📅 Rendez-vous</button>
+        <button class="tab-btn" data-tab="notes">📝 Notes</button>
         <button class="tab-btn" data-tab="health">💪 Santé</button>
       </div>
 
       <!-- Contenus des onglets -->
       <div class="tabs-content">
-        <!-- Section de notes journalières -->
-        <section class="tab-panel active" id="tab-notes">
-          <div class="card">
-            <h2>📝 Mes Notes</h2>
-            <div id="notes-section">
-              <textarea id="note-input" placeholder="Notez vos pensées, symptômes, questions..."></textarea>
-              <button id="add-note-btn" class="primary-btn">Ajouter une note</button>
-              <div id="notes-list"></div>
-            </div>
-          </div>
-        </section>
-
         <!-- Section de rendez-vous -->
-        <section class="tab-panel" id="tab-appointments">
+        <section class="tab-panel active" id="tab-appointments">
           <div class="card">
             <h2>📅 Mes Rendez-vous</h2>
             <div id="appointments-section">
@@ -65,6 +53,18 @@
                 <button id="add-appointment-btn" class="primary-btn">Ajouter</button>
               </div>
               <div id="appointments-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section de notes journalières -->
+        <section class="tab-panel" id="tab-notes">
+          <div class="card">
+            <h2>📝 Mes Notes</h2>
+            <div id="notes-section">
+              <textarea id="note-input" placeholder="Notez vos pensées, symptômes, questions..."></textarea>
+              <button id="add-note-btn" class="primary-btn">Ajouter une note</button>
+              <div id="notes-list"></div>
             </div>
           </div>
         </section>
