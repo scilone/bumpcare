@@ -24,8 +24,17 @@ import {
 
 import { getDailyTip } from './tips.js';
 
+import { Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, Filler } from 'chart.js';
+import 'chartjs-adapter-date-fns';
+
+// Register Chart.js components
+Chart.register(LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, Filler);
+
 // Track if this is first-time setup
 let isFirstTimeSetup = false;
+
+// Track chart instance
+let weightChart = null;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
@@ -333,26 +342,122 @@ function loadAppointmentsList() {
 function loadWeightHistoryList() {
   const history = loadWeightHistory();
   const historyElement = document.getElementById('weight-history');
+  const canvas = document.getElementById('weight-chart');
   
   if (history.length === 0) {
     historyElement.innerHTML = '<div class="empty-state">Aucune mesure enregistrée</div>';
+    if (weightChart) {
+      weightChart.destroy();
+      weightChart = null;
+    }
     return;
   }
   
-  historyElement.innerHTML = history.slice(0, 5).map(record => {
-    const date = new Date(record.date);
-    const formattedDate = date.toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'short'
-    });
-    
-    return `
-      <div class="weight-record">
-        <span class="weight-value">${record.weight} kg</span>
-        <span class="weight-date">${formattedDate}</span>
-      </div>
-    `;
-  }).join('');
+  // Ensure canvas is visible
+  if (!canvas) {
+    historyElement.innerHTML = '<canvas id="weight-chart"></canvas>';
+  }
+  
+  // Prepare data for chart (reverse to show chronological order)
+  const sortedHistory = [...history].reverse();
+  const labels = sortedHistory.map(record => new Date(record.date));
+  const data = sortedHistory.map(record => record.weight);
+  
+  // Destroy existing chart if it exists
+  if (weightChart) {
+    weightChart.destroy();
+  }
+  
+  // Create new chart
+  const ctx = document.getElementById('weight-chart');
+  weightChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Poids (kg)',
+        data: data,
+        borderColor: '#FF6B9D',
+        backgroundColor: 'rgba(255, 107, 157, 0.1)',
+        tension: 0.4,
+        fill: true,
+        pointBackgroundColor: '#FF6B9D',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleFont: {
+            size: 14
+          },
+          bodyFont: {
+            size: 14
+          },
+          padding: 12,
+          displayColors: false,
+          callbacks: {
+            title: function(context) {
+              const date = new Date(context[0].label);
+              return date.toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              });
+            },
+            label: function(context) {
+              return context.parsed.y + ' kg';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: 'day',
+            displayFormats: {
+              day: 'd MMM'
+            }
+          },
+          title: {
+            display: true,
+            text: 'Date',
+            font: {
+              size: 12
+            }
+          },
+          grid: {
+            display: false
+          }
+        },
+        y: {
+          beginAtZero: false,
+          title: {
+            display: true,
+            text: 'Poids (kg)',
+            font: {
+              size: 12
+            }
+          },
+          ticks: {
+            callback: function(value) {
+              return value + ' kg';
+            }
+          }
+        }
+      }
+    }
+  });
 }
 
 // Daily Tip

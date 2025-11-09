@@ -374,6 +374,15 @@ textarea {
   color: var(--text-light);
 }
 
+#weight-history {
+  min-height: 250px;
+  margin-top: 1rem;
+}
+
+#weight-chart {
+  max-height: 300px;
+}
+
 /* Tips */
 .tip {
   background: var(--bg-light);
