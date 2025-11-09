@@ -358,11 +358,12 @@ function loadUpcomingAppointments() {
 // Calendar View
 function loadCalendarView() {
   const weeks = getWeeksInYear();
-  const currentWeek = getCurrentWeek();
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
   const calendarGrid = document.querySelector('.calendar-grid');
   
   calendarGrid.innerHTML = weeks.map(week => {
-    const isCurrentWeek = week.weekNumber === currentWeek.weekNumber;
+    const isCurrentWeek = now >= week.startDate && now <= week.endDate;
     const hasAppointments = weekHasAppointments(week.startDate, week.endDate);
     
     let classes = 'calendar-week';
