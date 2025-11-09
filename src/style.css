@@ -265,6 +265,15 @@ textarea {
   font-weight: 600;
 }
 
+.health-item input {
+  margin-bottom: 0;
+}
+
+.health-item button {
+  margin-top: 0;
+  width: auto;
+}
+
 .weight-record {
   display: flex;
   justify-content: space-between;
