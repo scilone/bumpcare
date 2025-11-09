@@ -209,7 +209,7 @@ function setupEventListeners() {
     const time = document.getElementById('appointment-time').value;
     const note = document.getElementById('appointment-note').value;
     
-    if (date) {
+    if (date && note) {
       addAppointment(date, time, note);
       document.getElementById('appointment-date').value = '';
       document.getElementById('appointment-time').value = '';
