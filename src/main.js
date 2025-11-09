@@ -301,6 +301,8 @@ function loadAppointmentsList() {
     return;
   }
   
+  const now = new Date();
+  
   appointmentsList.innerHTML = appointments.map(apt => {
     const date = new Date(apt.date);
     const formattedDate = date.toLocaleDateString('fr-FR', {
@@ -309,10 +311,14 @@ function loadAppointmentsList() {
       year: 'numeric'
     });
     
+    // Check if appointment is in the past
+    const appointmentDateTime = new Date(`${apt.date}T${apt.time}`);
+    const isPast = appointmentDateTime < now;
+    const pastClass = isPast ? ' past' : '';
     const timeDisplay = apt.time ? ` à ${apt.time}` : '';
     
     return `
-      <div class="appointment-item" data-id="${apt.id}">
+      <div class="appointment-item${pastClass}" data-id="${apt.id}">
         <div class="appointment-info">
           <div class="appointment-date-time">${formattedDate}${timeDisplay}</div>
           ${apt.note ? `<div class="appointment-note">${escapeHtml(apt.note)}</div>` : ''}

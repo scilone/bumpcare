@@ -308,6 +308,12 @@ textarea {
   border-left: 4px solid var(--secondary-color);
 }
 
+.appointment-item.past {
+  opacity: 0.5;
+  background: #f5f5f5;
+  border-left-color: #ccc;
+}
+
 .appointment-info {
   flex: 1;
 }
@@ -316,6 +322,10 @@ textarea {
   font-weight: 600;
   color: var(--primary-color);
   margin-bottom: 0.25rem;
+}
+
+.appointment-item.past .appointment-date-time {
+  color: #999;
 }
 
 .appointment-note {
