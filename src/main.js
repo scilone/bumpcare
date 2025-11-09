@@ -209,7 +209,7 @@ function setupEventListeners() {
     const time = document.getElementById('appointment-time').value;
     const note = document.getElementById('appointment-note').value;
     
-    if (date && time) {
+    if (date) {
       addAppointment(date, time, note);
       document.getElementById('appointment-date').value = '';
       document.getElementById('appointment-time').value = '';
@@ -281,10 +281,12 @@ function loadAppointmentsList() {
       year: 'numeric'
     });
     
+    const timeDisplay = apt.time ? ` à ${apt.time}` : '';
+    
     return `
       <div class="appointment-item" data-id="${apt.id}">
         <div class="appointment-info">
-          <div class="appointment-date-time">${formattedDate} à ${apt.time}</div>
+          <div class="appointment-date-time">${formattedDate}${timeDisplay}</div>
           ${apt.note ? `<div class="appointment-note">${escapeHtml(apt.note)}</div>` : ''}
         </div>
         <button class="delete-btn" onclick="window.deleteAppointmentHandler(${apt.id})">🗑️</button>
