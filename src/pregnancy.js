@@ -1,7 +1,7 @@
 // Pregnancy calculation utilities
 
-export function calculatePregnancyWeek(dueDate) {
-  const now = new Date();
+export function calculatePregnancyWeek(dueDate, targetDate = null) {
+  const now = targetDate ? new Date(targetDate) : new Date();
   const due = new Date(dueDate);
   
   // Calculate conception date (280 days before due date)
