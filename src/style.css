@@ -335,15 +335,21 @@ textarea {
 
 /* Health Tracking */
 .health-item {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  align-items: center;
   margin-bottom: 1rem;
 }
 
 .health-item label {
   font-weight: 600;
+}
+
+.weight-input-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  align-items: flex-end;
 }
 
 .health-item input {
@@ -372,6 +378,15 @@ textarea {
 
 .weight-date {
   color: var(--text-light);
+}
+
+#weight-history {
+  min-height: 250px;
+  margin-top: 1rem;
+}
+
+#weight-chart {
+  max-height: 300px;
 }
 
 /* Tips */

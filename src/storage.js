@@ -124,12 +124,13 @@ export function loadWeightHistory() {
   return loadData(STORAGE_KEYS.WEIGHT_HISTORY) || [];
 }
 
-export function addWeight(weight) {
+export function addWeight(weight, date = null) {
   const history = loadWeightHistory();
+  const recordDate = date ? new Date(date + 'T00:00:00').toISOString() : new Date().toISOString();
   const newRecord = {
     id: Date.now(),
     weight: parseFloat(weight),
-    date: new Date().toISOString()
+    date: recordDate
   };
   history.unshift(newRecord);
   // Keep only last 50 records
