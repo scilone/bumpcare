@@ -219,7 +219,7 @@ function setupEventListeners() {
   });
   
   // Weight tracking
-  document.getElementById('add-weight-btn').addEventListener('click', () => {
+  const handleWeightSubmit = () => {
     const weightInput = document.getElementById('weight-input');
     const weight = weightInput.value;
     
@@ -227,6 +227,16 @@ function setupEventListeners() {
       addWeight(weight);
       weightInput.value = '';
       loadWeightHistoryList();
+    }
+  };
+  
+  document.getElementById('add-weight-btn').addEventListener('click', handleWeightSubmit);
+  
+  // Allow Enter key to submit weight
+  document.getElementById('weight-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleWeightSubmit();
     }
   });
 }
