@@ -116,9 +116,6 @@ ISC
 
 ## 🌟 Feuille de Route
 
-- [ ] Graphiques de suivi de poids
-- [ ] Export des données (JSON)
-- [ ] Import des données
 - [ ] Rappels/notifications pour les rendez-vous
 - [ ] Mode sombre
 - [ ] Support multilingue
