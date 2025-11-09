@@ -57,3 +57,12 @@ export function formatWeekDisplay(weeks, days) {
   }
   return `Semaine ${weeks} + ${days} jour${days > 1 ? 's' : ''}`;
 }
+
+// Calculate due date from last menstrual period (LMP)
+// LMP + 280 days = Due Date (Naegele's rule)
+export function calculateDueDateFromLMP(lmpDate) {
+  const lmp = new Date(lmpDate);
+  const dueDate = new Date(lmp);
+  dueDate.setDate(lmp.getDate() + 280);
+  return dueDate.toISOString().split('T')[0]; // Return in YYYY-MM-DD format
+}

@@ -89,11 +89,28 @@
     <div class="modal-content">
       <h2>Configuration de votre grossesse</h2>
       <form id="setup-form">
-        <label for="due-date">Date prévue d'accouchement</label>
-        <input type="date" id="due-date" required>
+        <label for="name">Votre prénom *</label>
+        <input type="text" id="name" placeholder="Prénom" required>
         
-        <label for="name">Votre prénom (optionnel)</label>
-        <input type="text" id="name" placeholder="Prénom">
+        <div class="date-choice-section">
+          <p style="font-weight: 600; margin-bottom: 0.5rem;">Choisissez une option *</p>
+          
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="date-type" value="due-date" checked>
+              <span>Date prévue d'accouchement</span>
+            </label>
+            <input type="date" id="due-date" class="date-input active" required>
+          </div>
+          
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="date-type" value="lmp-date">
+              <span>Date des dernières règles</span>
+            </label>
+            <input type="date" id="lmp-date" class="date-input">
+          </div>
+        </div>
         
         <div class="modal-actions">
           <button type="submit" class="primary-btn">Enregistrer</button>
