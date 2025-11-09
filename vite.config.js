@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  base: '/bumpcare/',
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
@@ -13,8 +14,8 @@ export default defineConfig({
         theme_color: '#FF6B9D',
         background_color: '#FFFFFF',
         display: 'standalone',
-        scope: '/',
-        start_url: '/',
+        scope: '/bumpcare/',
+        start_url: '/bumpcare/',
         orientation: 'portrait-primary',
         icons: [
           {
