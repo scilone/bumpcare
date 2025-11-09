@@ -91,15 +91,18 @@ export function addAppointment(date, time, note) {
   const newAppointment = {
     id: Date.now(),
     date,
-    time,
+    time: time || null,
     note,
     created: new Date().toISOString()
   };
   appointments.push(newAppointment);
   // Sort by date and time
   appointments.sort((a, b) => {
-    const dateA = new Date(a.date + ' ' + a.time);
-    const dateB = new Date(b.date + ' ' + b.time);
+    // Build date strings for comparison, using midnight (00:00) if no time is specified
+    const timeA = a.time || '00:00';
+    const timeB = b.time || '00:00';
+    const dateA = new Date(a.date + ' ' + timeA);
+    const dateB = new Date(b.date + ' ' + timeB);
     return dateA - dateB;
   });
   saveAppointments(appointments);

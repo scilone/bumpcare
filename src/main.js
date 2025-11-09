@@ -124,6 +124,24 @@ function hideSetupModal() {
 }
 
 function setupEventListeners() {
+  // Tab navigation
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetTab = button.getAttribute('data-tab');
+      
+      // Remove active class from all buttons and panels
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabPanels.forEach(panel => panel.classList.remove('active'));
+      
+      // Add active class to clicked button and corresponding panel
+      button.classList.add('active');
+      document.getElementById(`tab-${targetTab}`).classList.add('active');
+    });
+  });
+  
   // Radio button listeners for date choice
   const radioButtons = document.querySelectorAll('input[name="date-type"]');
   radioButtons.forEach(radio => {
@@ -209,7 +227,7 @@ function setupEventListeners() {
     const time = document.getElementById('appointment-time').value;
     const note = document.getElementById('appointment-note').value;
     
-    if (date && time) {
+    if (date && note) {
       addAppointment(date, time, note);
       document.getElementById('appointment-date').value = '';
       document.getElementById('appointment-time').value = '';
@@ -219,7 +237,7 @@ function setupEventListeners() {
   });
   
   // Weight tracking
-  document.getElementById('add-weight-btn').addEventListener('click', () => {
+  const handleWeightSubmit = () => {
     const weightInput = document.getElementById('weight-input');
     const weight = weightInput.value;
     
@@ -227,6 +245,16 @@ function setupEventListeners() {
       addWeight(weight);
       weightInput.value = '';
       loadWeightHistoryList();
+    }
+  };
+  
+  document.getElementById('add-weight-btn').addEventListener('click', handleWeightSubmit);
+  
+  // Allow Enter key to submit weight
+  document.getElementById('weight-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleWeightSubmit();
     }
   });
 }
@@ -287,11 +315,12 @@ function loadAppointmentsList() {
     const appointmentDateTime = new Date(`${apt.date}T${apt.time}`);
     const isPast = appointmentDateTime < now;
     const pastClass = isPast ? ' past' : '';
+    const timeDisplay = apt.time ? ` à ${apt.time}` : '';
     
     return `
       <div class="appointment-item${pastClass}" data-id="${apt.id}">
         <div class="appointment-info">
-          <div class="appointment-date-time">${formattedDate} à ${apt.time}</div>
+          <div class="appointment-date-time">${formattedDate}${timeDisplay}</div>
           ${apt.note ? `<div class="appointment-note">${escapeHtml(apt.note)}</div>` : ''}
         </div>
         <button class="delete-btn" onclick="window.deleteAppointmentHandler(${apt.id})">🗑️</button>
