@@ -248,14 +248,21 @@ function setupEventListeners() {
   // Weight tracking
   const handleWeightSubmit = () => {
     const weightInput = document.getElementById('weight-input');
+    const weightDateInput = document.getElementById('weight-date');
     const weight = weightInput.value;
+    const selectedDate = weightDateInput.value;
     
     if (weight && weight > 0) {
-      addWeight(weight);
+      addWeight(weight, selectedDate);
       weightInput.value = '';
+      weightDateInput.value = '';
       loadWeightHistoryList();
     }
   };
+  
+  // Set today's date as default
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('weight-date').value = today;
   
   document.getElementById('add-weight-btn').addEventListener('click', handleWeightSubmit);
   
@@ -358,8 +365,8 @@ function loadWeightHistoryList() {
     historyElement.innerHTML = '<canvas id="weight-chart"></canvas>';
   }
   
-  // Prepare data for chart (reverse to show chronological order)
-  const sortedHistory = [...history].reverse();
+  // Prepare data for chart (sort by date)
+  const sortedHistory = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
   const labels = sortedHistory.map(record => new Date(record.date));
   const data = sortedHistory.map(record => record.weight);
   
@@ -407,7 +414,8 @@ function loadWeightHistoryList() {
           displayColors: false,
           callbacks: {
             title: function(context) {
-              const date = new Date(context[0].label);
+              const timestamp = context[0].parsed.x;
+              const date = new Date(timestamp);
               return date.toLocaleDateString('fr-FR', {
                 day: 'numeric',
                 month: 'long',
