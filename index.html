@@ -32,42 +32,58 @@
         </div>
       </section>
 
-      <!-- Section de notes journalières -->
-      <section class="card">
-        <h2>📝 Mes Notes</h2>
-        <div id="notes-section">
-          <textarea id="note-input" placeholder="Notez vos pensées, symptômes, questions..."></textarea>
-          <button id="add-note-btn" class="primary-btn">Ajouter une note</button>
-          <div id="notes-list"></div>
-        </div>
-      </section>
+      <!-- Navigation par onglets -->
+      <div class="tabs-navigation">
+        <button class="tab-btn active" data-tab="appointments">📅 Rendez-vous</button>
+        <button class="tab-btn" data-tab="notes">📝 Notes</button>
+        <button class="tab-btn" data-tab="health">💪 Santé</button>
+      </div>
 
-      <!-- Section de rendez-vous -->
-      <section class="card">
-        <h2>📅 Mes Rendez-vous</h2>
-        <div id="appointments-section">
-          <div class="appointment-form">
-            <input type="date" id="appointment-date" placeholder="Date">
-            <input type="time" id="appointment-time" placeholder="Heure (optionnel)">
-            <input type="text" id="appointment-note" placeholder="Note (ex: Échographie)">
-            <button id="add-appointment-btn" class="primary-btn">Ajouter</button>
+      <!-- Contenus des onglets -->
+      <div class="tabs-content">
+        <!-- Section de rendez-vous -->
+        <section class="tab-panel active" id="tab-appointments">
+          <div class="card">
+            <h2>📅 Mes Rendez-vous</h2>
+            <div id="appointments-section">
+              <div class="appointment-form">
+                <input type="date" id="appointment-date" placeholder="Date">
+                <input type="time" id="appointment-time" placeholder="Heure">
+                <input type="text" id="appointment-note" placeholder="Note (ex: Échographie)">
+                <button id="add-appointment-btn" class="primary-btn">Ajouter</button>
+              </div>
+              <div id="appointments-list"></div>
+            </div>
           </div>
-          <div id="appointments-list"></div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Section de suivi santé -->
-      <section class="card">
-        <h2>💪 Suivi Santé</h2>
-        <div id="health-tracking">
-          <div class="health-item">
-            <label>Poids (kg)</label>
-            <input type="number" id="weight-input" step="0.1">
-            <button id="add-weight-btn" class="secondary-btn">Enregistrer</button>
+        <!-- Section de notes journalières -->
+        <section class="tab-panel" id="tab-notes">
+          <div class="card">
+            <h2>📝 Mes Notes</h2>
+            <div id="notes-section">
+              <textarea id="note-input" placeholder="Notez vos pensées, symptômes, questions..."></textarea>
+              <button id="add-note-btn" class="primary-btn">Ajouter une note</button>
+              <div id="notes-list"></div>
+            </div>
           </div>
-          <div id="weight-history"></div>
-        </div>
-      </section>
+        </section>
+
+        <!-- Section de suivi santé -->
+        <section class="tab-panel" id="tab-health">
+          <div class="card">
+            <h2>💪 Suivi Santé</h2>
+            <div id="health-tracking">
+              <div class="health-item">
+                <label>Poids (kg)</label>
+                <input type="number" id="weight-input" step="0.1">
+                <button id="add-weight-btn" class="secondary-btn">Enregistrer</button>
+              </div>
+              <div id="weight-history"></div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <!-- Section de conseils -->
       <section class="card">
