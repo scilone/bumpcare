@@ -333,6 +333,195 @@ textarea {
   color: var(--text-light);
 }
 
+/* Calendar View */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.calendar-week {
+  aspect-ratio: 1;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--bg-white);
+  padding: 0.5rem;
+}
+
+.calendar-week:hover {
+  border-color: var(--primary-color);
+  background: var(--bg-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.calendar-week.current-week {
+  border-color: var(--primary-color);
+  background: var(--accent-color);
+  font-weight: bold;
+}
+
+.calendar-week.has-appointments {
+  background: var(--secondary-color);
+  border-color: var(--primary-color);
+}
+
+.calendar-week.has-appointments.current-week {
+  background: var(--primary-color);
+  color: white;
+}
+
+.week-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.calendar-week.current-week .week-number,
+.calendar-week.has-appointments.current-week .week-number {
+  color: white;
+}
+
+.week-month {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.week-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  margin-top: 0.25rem;
+}
+
+/* Week Details Modal */
+.week-details-modal {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0;
+  width: auto;
+  margin: 0;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: var(--primary-color);
+}
+
+.week-detail-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.week-detail-section:last-child {
+  border-bottom: none;
+}
+
+.week-detail-section h3 {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.pregnancy-info-detail {
+  background: var(--bg-light);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.pregnancy-info-detail p {
+  margin: 0.5rem 0;
+}
+
+.pregnancy-info-detail strong {
+  color: var(--primary-color);
+}
+
+.baby-development-info {
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--bg-light) 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+  font-style: italic;
+  color: var(--text-dark);
+  margin-top: 0.5rem;
+}
+
+.week-appointments-list {
+  margin-top: 0.5rem;
+}
+
+.week-appointment-item {
+  background: var(--bg-light);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  border-left: 3px solid var(--secondary-color);
+}
+
+.week-appointment-time {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+.week-appointment-note {
+  color: var(--text-dark);
+  margin-top: 0.25rem;
+}
+
+/* Upcoming Appointments */
+.upcoming-appointment-item {
+  background: var(--bg-light);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  border-left: 4px solid var(--primary-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.upcoming-appointment-info {
+  flex: 1;
+}
+
+.upcoming-appointment-date {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.upcoming-appointment-note {
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
 /* Health Tracking */
 .health-item {
   display: grid;

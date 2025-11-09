@@ -43,8 +43,23 @@
       <div class="tabs-content">
         <!-- Section de rendez-vous -->
         <section class="tab-panel active" id="tab-appointments">
+          <!-- Mes prochains rendez-vous -->
           <div class="card">
-            <h2>📅 Mes Rendez-vous</h2>
+            <h2>📅 Mes Prochains Rendez-vous</h2>
+            <div id="upcoming-appointments"></div>
+          </div>
+          
+          <!-- Calendrier hebdomadaire -->
+          <div class="card">
+            <h2>📆 Calendrier</h2>
+            <div id="calendar-view">
+              <div class="calendar-grid"></div>
+            </div>
+          </div>
+          
+          <!-- Formulaire d'ajout -->
+          <div class="card">
+            <h2>➕ Ajouter un Rendez-vous</h2>
             <div id="appointments-section">
               <div class="appointment-form">
                 <input type="date" id="appointment-date" placeholder="Date">
@@ -52,7 +67,6 @@
                 <input type="text" id="appointment-note" placeholder="Note (ex: Échographie)">
                 <button id="add-appointment-btn" class="primary-btn">Ajouter</button>
               </div>
-              <div id="appointments-list"></div>
             </div>
           </div>
         </section>
@@ -133,6 +147,15 @@
           <button type="button" id="cancel-setup" class="secondary-btn">Annuler</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal de détails de semaine -->
+  <div id="week-modal" class="modal hidden">
+    <div class="modal-content week-details-modal">
+      <button class="close-modal-btn" id="close-week-modal">✕</button>
+      <h2 id="week-modal-title"></h2>
+      <div id="week-modal-content"></div>
     </div>
   </div>
 

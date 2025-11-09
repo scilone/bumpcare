@@ -24,6 +24,16 @@ import {
 
 import { getDailyTip } from './tips.js';
 
+import {
+  getWeeksInYear,
+  getCurrentWeek,
+  getAppointmentsForWeek,
+  getPregnancyInfoForWeek,
+  formatWeekRange,
+  getUpcomingAppointments,
+  weekHasAppointments
+} from './calendar.js';
+
 // Track if this is first-time setup
 let isFirstTimeSetup = false;
 
@@ -42,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeApp() {
   loadPregnancyTracker();
   loadNotesList();
-  loadAppointmentsList();
+  loadCalendarView();
+  loadUpcomingAppointments();
   loadWeightHistoryList();
   loadDailyTip();
 }
@@ -232,9 +243,13 @@ function setupEventListeners() {
       document.getElementById('appointment-date').value = '';
       document.getElementById('appointment-time').value = '';
       document.getElementById('appointment-note').value = '';
-      loadAppointmentsList();
+      loadCalendarView();
+      loadUpcomingAppointments();
     }
   });
+  
+  // Close week modal
+  document.getElementById('close-week-modal').addEventListener('click', hideWeekModal);
   
   // Weight tracking
   const handleWeightSubmit = () => {
@@ -291,42 +306,154 @@ function loadNotesList() {
   }).join('');
 }
 
-// Appointments List
-function loadAppointmentsList() {
-  const appointments = loadAppointments();
-  const appointmentsList = document.getElementById('appointments-list');
+// Upcoming Appointments
+function loadUpcomingAppointments() {
+  const upcoming = getUpcomingAppointments(3);
+  const upcomingElement = document.getElementById('upcoming-appointments');
   
-  if (appointments.length === 0) {
-    appointmentsList.innerHTML = '<div class="empty-state">Aucun rendez-vous prévu</div>';
+  if (upcoming.length === 0) {
+    upcomingElement.innerHTML = '<div class="empty-state">Aucun rendez-vous à venir</div>';
     return;
   }
   
-  const now = new Date();
-  
-  appointmentsList.innerHTML = appointments.map(apt => {
+  upcomingElement.innerHTML = upcoming.map(apt => {
     const date = new Date(apt.date);
     const formattedDate = date.toLocaleDateString('fr-FR', {
+      weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
     
-    // Check if appointment is in the past
-    const appointmentDateTime = new Date(`${apt.date}T${apt.time}`);
-    const isPast = appointmentDateTime < now;
-    const pastClass = isPast ? ' past' : '';
     const timeDisplay = apt.time ? ` à ${apt.time}` : '';
     
     return `
-      <div class="appointment-item${pastClass}" data-id="${apt.id}">
-        <div class="appointment-info">
-          <div class="appointment-date-time">${formattedDate}${timeDisplay}</div>
-          ${apt.note ? `<div class="appointment-note">${escapeHtml(apt.note)}</div>` : ''}
+      <div class="upcoming-appointment-item" data-id="${apt.id}">
+        <div class="upcoming-appointment-info">
+          <div class="upcoming-appointment-date">${formattedDate}${timeDisplay}</div>
+          ${apt.note ? `<div class="upcoming-appointment-note">${escapeHtml(apt.note)}</div>` : ''}
         </div>
-        <button class="delete-btn" onclick="window.deleteAppointmentHandler(${apt.id})">🗑️</button>
       </div>
     `;
   }).join('');
+}
+
+// Calendar View
+function loadCalendarView() {
+  const weeks = getWeeksInYear();
+  const currentWeek = getCurrentWeek();
+  const calendarGrid = document.querySelector('.calendar-grid');
+  
+  calendarGrid.innerHTML = weeks.map(week => {
+    const isCurrentWeek = week.weekNumber === currentWeek.weekNumber;
+    const hasAppointments = weekHasAppointments(week.startDate, week.endDate);
+    
+    let classes = 'calendar-week';
+    if (isCurrentWeek) classes += ' current-week';
+    if (hasAppointments) classes += ' has-appointments';
+    
+    const monthName = week.startDate.toLocaleDateString('fr-FR', { month: 'short' });
+    
+    return `
+      <div class="${classes}" 
+           data-week-start="${week.startDate.toISOString()}"
+           data-week-end="${week.endDate.toISOString()}"
+           onclick="window.showWeekDetailsHandler('${week.startDate.toISOString()}', '${week.endDate.toISOString()}')">
+        <div class="week-number">S${week.weekNumber}</div>
+        <div class="week-month">${monthName}</div>
+        ${hasAppointments ? '<div class="week-indicator"></div>' : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// Show week details modal
+function showWeekDetails(weekStartISO, weekEndISO) {
+  const weekStart = new Date(weekStartISO);
+  const weekEnd = new Date(weekEndISO);
+  
+  const modal = document.getElementById('week-modal');
+  const title = document.getElementById('week-modal-title');
+  const content = document.getElementById('week-modal-content');
+  
+  // Format date range
+  const dateRange = formatWeekRange(weekStart, weekEnd);
+  title.textContent = `Semaine ${dateRange.short}`;
+  
+  // Get appointments for this week
+  const appointments = getAppointmentsForWeek(weekStart, weekEnd);
+  
+  // Get pregnancy info for this week
+  const pregnancyInfo = getPregnancyInfoForWeek(weekStart);
+  
+  let contentHTML = `
+    <div class="week-detail-section">
+      <h3>📅 Période</h3>
+      <p>${dateRange.long}</p>
+      <p style="color: var(--text-light);">${dateRange.short}</p>
+    </div>
+  `;
+  
+  if (pregnancyInfo) {
+    const trimesterText = pregnancyInfo.trimester === 1 ? '1er trimestre' : 
+                          pregnancyInfo.trimester === 2 ? '2e trimestre' : '3e trimestre';
+    
+    contentHTML += `
+      <div class="week-detail-section">
+        <h3>🤰 Votre Grossesse</h3>
+        <div class="pregnancy-info-detail">
+          <p><strong>Trimestre:</strong> ${trimesterText}</p>
+          <p><strong>Semaine de grossesse:</strong> Semaine ${pregnancyInfo.weeks} + ${pregnancyInfo.days} jour${pregnancyInfo.days > 1 ? 's' : ''}</p>
+          <p><strong>SA (Semaines d'Aménorrhée):</strong> ${pregnancyInfo.weeks + 2} SA</p>
+        </div>
+      </div>
+      
+      <div class="week-detail-section">
+        <h3>👶 Développement de Bébé</h3>
+        <div class="baby-development-info">
+          ${pregnancyInfo.development}
+        </div>
+      </div>
+    `;
+  }
+  
+  contentHTML += `
+    <div class="week-detail-section">
+      <h3>📅 Rendez-vous de la Semaine</h3>
+  `;
+  
+  if (appointments.length === 0) {
+    contentHTML += '<p style="color: var(--text-light); font-style: italic;">Aucun rendez-vous cette semaine</p>';
+  } else {
+    contentHTML += '<div class="week-appointments-list">';
+    appointments.forEach(apt => {
+      const date = new Date(apt.date);
+      const formattedDate = date.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+      });
+      const timeDisplay = apt.time ? ` à ${apt.time}` : '';
+      
+      contentHTML += `
+        <div class="week-appointment-item">
+          <div class="week-appointment-time">${formattedDate}${timeDisplay}</div>
+          ${apt.note ? `<div class="week-appointment-note">${escapeHtml(apt.note)}</div>` : ''}
+        </div>
+      `;
+    });
+    contentHTML += '</div>';
+  }
+  
+  contentHTML += '</div>';
+  
+  content.innerHTML = contentHTML;
+  modal.classList.remove('hidden');
+}
+
+function hideWeekModal() {
+  const modal = document.getElementById('week-modal');
+  modal.classList.add('hidden');
 }
 
 // Weight History List
@@ -372,8 +499,13 @@ window.deleteNoteHandler = (noteId) => {
 window.deleteAppointmentHandler = (aptId) => {
   if (confirm('Supprimer ce rendez-vous ?')) {
     deleteAppointment(aptId);
-    loadAppointmentsList();
+    loadCalendarView();
+    loadUpcomingAppointments();
   }
+};
+
+window.showWeekDetailsHandler = (weekStartISO, weekEndISO) => {
+  showWeekDetails(weekStartISO, weekEndISO);
 };
 
 // Utility function to escape HTML
