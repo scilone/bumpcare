@@ -914,12 +914,23 @@ function updateUILanguage() {
 
 // Update static HTML content with translations
 function updateStaticContent() {
+  // Helper function to safely update element
+  const safeUpdate = (selector, property, value) => {
+    const element = document.querySelector(selector);
+    if (element) {
+      element[property] = value;
+    }
+  };
+  
+  // Update HTML lang attribute
+  document.documentElement.lang = getCurrentLanguage();
+  
   // Update page title
   document.title = `BumpCare - ${t('tagline')}`;
   
   // Update header
-  document.querySelector('header h1').textContent = `🤰 ${t('appTitle')}`;
-  document.querySelector('header .tagline').textContent = t('tagline');
+  safeUpdate('header h1', 'textContent', `🤰 ${t('appTitle')}`);
+  safeUpdate('header .tagline', 'textContent', t('tagline'));
   
   // Update tabs
   const tabs = document.querySelectorAll('.tab-btn');
@@ -929,51 +940,59 @@ function updateStaticContent() {
   });
   
   // Update section titles
-  document.querySelector('.pregnancy-info h2').textContent = t('myPregnancy');
-  document.querySelector('#tab-appointments .card:nth-child(1) h2').textContent = t('myAppointments');
-  document.querySelector('#tab-appointments .card:nth-child(2) h2').textContent = t('calendar');
-  document.querySelector('#tab-appointments .card:nth-child(3) h2').textContent = t('addAppointment');
-  document.querySelector('#tab-appointments .card:nth-child(4) h2').textContent = t('notifications');
-  document.querySelector('#tab-appointments .card:nth-child(4) p').textContent = t('notificationDescription');
+  safeUpdate('.pregnancy-info h2', 'textContent', t('myPregnancy'));
+  safeUpdate('#tab-appointments .card:nth-child(1) h2', 'textContent', t('myAppointments'));
+  safeUpdate('#tab-appointments .card:nth-child(2) h2', 'textContent', t('calendar'));
+  safeUpdate('#tab-appointments .card:nth-child(3) h2', 'textContent', t('addAppointment'));
+  safeUpdate('#tab-appointments .card:nth-child(4) h2', 'textContent', t('notifications'));
+  safeUpdate('#tab-appointments .card:nth-child(4) p', 'textContent', t('notificationDescription'));
   
-  document.querySelector('#tab-notes h2').textContent = t('myNotes');
-  document.querySelector('#note-input').placeholder = t('notePlaceholder');
-  document.querySelector('#add-note-btn').textContent = t('addNote');
+  safeUpdate('#tab-notes h2', 'textContent', t('myNotes'));
+  safeUpdate('#note-input', 'placeholder', t('notePlaceholder'));
+  safeUpdate('#add-note-btn', 'textContent', t('addNote'));
   
-  document.querySelector('#tab-preparation .card:nth-child(1) h2').textContent = t('maternityPreparation');
-  document.querySelector('#tab-preparation .card:nth-child(1) p').textContent = t('maternityDescription');
-  document.querySelector('#maternity-item-input').placeholder = t('addCustomItem');
+  safeUpdate('#tab-preparation .card:nth-child(1) h2', 'textContent', t('maternityPreparation'));
+  safeUpdate('#tab-preparation .card:nth-child(1) p', 'textContent', t('maternityDescription'));
+  safeUpdate('#maternity-item-input', 'placeholder', t('addCustomItem'));
   
-  document.querySelector('#tab-preparation .card:nth-child(2) h2').textContent = t('babyArrival');
-  document.querySelector('#tab-preparation .card:nth-child(2) p').textContent = t('babyArrivalDescription');
-  document.querySelector('#baby-arrival-item-input').placeholder = t('addCustomItem');
+  safeUpdate('#tab-preparation .card:nth-child(2) h2', 'textContent', t('babyArrival'));
+  safeUpdate('#tab-preparation .card:nth-child(2) p', 'textContent', t('babyArrivalDescription'));
+  safeUpdate('#baby-arrival-item-input', 'placeholder', t('addCustomItem'));
   
-  document.querySelector('#tab-health h2').textContent = t('healthTracking');
-  document.querySelector('#tab-health .health-item label').textContent = t('weight');
-  document.querySelector('#add-weight-btn').textContent = t('record');
+  safeUpdate('#tab-health h2', 'textContent', t('healthTracking'));
+  safeUpdate('#tab-health .health-item label', 'textContent', t('weight'));
+  safeUpdate('#add-weight-btn', 'textContent', t('record'));
   
-  // Update tips section
-  document.querySelector('.card:has(#tips-section) h2').textContent = t('dailyTip');
+  // Update tips section - using alternative selector
+  const tipsCard = document.querySelector('#tips-section')?.closest('.card');
+  if (tipsCard) {
+    const h2 = tipsCard.querySelector('h2');
+    if (h2) h2.textContent = t('dailyTip');
+  }
   
   // Update footer
-  document.querySelector('footer p:first-child').textContent = t('footerText');
-  document.querySelector('footer .version').textContent = t('version');
+  const footerP = document.querySelector('footer p:first-child');
+  if (footerP) footerP.textContent = t('footerText');
+  safeUpdate('footer .version', 'textContent', t('version'));
   
   // Update setup modal
-  document.querySelector('#setup-modal h2').textContent = t('setupTitle');
-  document.querySelector('label[for="name"]').textContent = t('firstName');
-  document.querySelector('#name').placeholder = t('firstNamePlaceholder');
-  document.querySelector('.date-choice-section > p').textContent = t('chooseOption');
-  document.querySelectorAll('.radio-option span')[0].textContent = t('dueDate');
-  document.querySelectorAll('.radio-option span')[1].textContent = t('lmpDate');
-  document.querySelector('#setup-form button[type="submit"]').textContent = t('save');
-  document.querySelector('#cancel-setup').textContent = t('cancel');
+  safeUpdate('#setup-modal h2', 'textContent', t('setupTitle'));
+  safeUpdate('label[for="name"]', 'textContent', t('firstName'));
+  safeUpdate('#name', 'placeholder', t('firstNamePlaceholder'));
+  safeUpdate('.date-choice-section > p', 'textContent', t('chooseOption'));
+  
+  const radioOptions = document.querySelectorAll('.radio-option span');
+  if (radioOptions[0]) radioOptions[0].textContent = t('dueDate');
+  if (radioOptions[1]) radioOptions[1].textContent = t('lmpDate');
+  
+  safeUpdate('#setup-form button[type="submit"]', 'textContent', t('save'));
+  safeUpdate('#cancel-setup', 'textContent', t('cancel'));
   
   // Update appointment form
-  document.querySelector('#appointment-date').placeholder = t('appointmentDate');
-  document.querySelector('#appointment-time').placeholder = t('appointmentTime');
-  document.querySelector('#appointment-note').placeholder = t('appointmentNote');
-  document.querySelector('#add-appointment-btn').textContent = t('add');
+  safeUpdate('#appointment-date', 'placeholder', t('appointmentDate'));
+  safeUpdate('#appointment-time', 'placeholder', t('appointmentTime'));
+  safeUpdate('#appointment-note', 'placeholder', t('appointmentNote'));
+  safeUpdate('#add-appointment-btn', 'textContent', t('add'));
 }
 
 // Register service worker for PWA
