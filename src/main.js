@@ -13,7 +13,11 @@ import {
   isOnboardingComplete,
   setOnboardingComplete,
   loadNotificationPreference,
-  saveNotificationPreference
+  saveNotificationPreference,
+  loadChecklists,
+  toggleChecklistItem,
+  addChecklistItem,
+  deleteChecklistItem
 } from './storage.js';
 
 import {
@@ -73,6 +77,7 @@ function initializeApp() {
   loadCalendarView();
   loadUpcomingAppointments();
   loadWeightHistoryList();
+  loadChecklistsDisplay();
   loadDailyTip();
   loadNotificationSettings();
   initializeNotificationSystem();
@@ -307,6 +312,27 @@ function setupEventListeners() {
   if (notificationBtn) {
     notificationBtn.addEventListener('click', handleNotificationPermissionRequest);
   }
+  
+  // Checklist items
+  document.getElementById('add-maternity-item-btn').addEventListener('click', () => {
+    const input = document.getElementById('maternity-item-input');
+    const text = input.value.trim();
+    if (text) {
+      addChecklistItem('maternity', text);
+      input.value = '';
+      loadChecklistsDisplay();
+    }
+  });
+  
+  document.getElementById('add-baby-arrival-item-btn').addEventListener('click', () => {
+    const input = document.getElementById('baby-arrival-item-input');
+    const text = input.value.trim();
+    if (text) {
+      addChecklistItem('babyArrival', text);
+      input.value = '';
+      loadChecklistsDisplay();
+    }
+  });
 }
 
 // Notes List
@@ -622,6 +648,37 @@ function loadWeightHistoryList() {
   });
 }
 
+// Checklists Display
+function loadChecklistsDisplay() {
+  const checklists = loadChecklists();
+  
+  // Load maternity checklist
+  const maternityContainer = document.getElementById('maternity-checklist');
+  maternityContainer.innerHTML = checklists.maternity.items.map(item => `
+    <div class="checklist-item ${item.checked ? 'checked' : ''}">
+      <input type="checkbox" 
+             id="maternity-${item.id}" 
+             ${item.checked ? 'checked' : ''}
+             onchange="window.toggleChecklistItemHandler('maternity', ${item.id})">
+      <label for="maternity-${item.id}">${escapeHtml(item.text)}</label>
+      <button class="delete-checklist-btn" onclick="window.deleteChecklistItemHandler('maternity', ${item.id})">🗑️</button>
+    </div>
+  `).join('');
+  
+  // Load baby arrival checklist
+  const babyArrivalContainer = document.getElementById('baby-arrival-checklist');
+  babyArrivalContainer.innerHTML = checklists.babyArrival.items.map(item => `
+    <div class="checklist-item ${item.checked ? 'checked' : ''}">
+      <input type="checkbox" 
+             id="baby-arrival-${item.id}" 
+             ${item.checked ? 'checked' : ''}
+             onchange="window.toggleChecklistItemHandler('babyArrival', ${item.id})">
+      <label for="baby-arrival-${item.id}">${escapeHtml(item.text)}</label>
+      <button class="delete-checklist-btn" onclick="window.deleteChecklistItemHandler('babyArrival', ${item.id})">🗑️</button>
+    </div>
+  `).join('');
+}
+
 // Daily Tip
 function loadDailyTip() {
   const tip = getDailyTip();
@@ -703,6 +760,18 @@ window.deleteAppointmentHandler = (aptId) => {
 
 window.showWeekDetailsHandler = (weekStartISO, weekEndISO) => {
   showWeekDetails(weekStartISO, weekEndISO);
+};
+
+window.toggleChecklistItemHandler = (checklistType, itemId) => {
+  toggleChecklistItem(checklistType, itemId);
+  loadChecklistsDisplay();
+};
+
+window.deleteChecklistItemHandler = (checklistType, itemId) => {
+  if (confirm('Supprimer cet article de la liste ?')) {
+    deleteChecklistItem(checklistType, itemId);
+    loadChecklistsDisplay();
+  }
 };
 
 // Utility function to escape HTML
