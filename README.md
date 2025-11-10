@@ -4,6 +4,7 @@ BumpCare est une Progressive Web App (PWA) conçue pour accompagner les femmes e
 
 ## ✨ Fonctionnalités
 
+- **Support multilingue** : Interface disponible en 5 langues (Français, English, Español, Italiano, Deutsch)
 - **Suivi de grossesse** : Calcul automatique de la semaine de grossesse et du nombre de jours restants
 - **Notes personnelles** : Conservez vos pensées, symptômes et questions
 - **Gestion des rendez-vous** : Planifiez et suivez vos rendez-vous médicaux
@@ -98,15 +99,37 @@ bumpcare/
 │   ├── pwa-512x512.png
 │   └── apple-touch-icon.png
 ├── src/                 # Code source
+│   ├── i18n/           # Système de traduction
+│   │   ├── index.js    # Gestionnaire i18n
+│   │   ├── fr.js       # Traductions françaises
+│   │   ├── en.js       # Traductions anglaises
+│   │   ├── es.js       # Traductions espagnoles
+│   │   ├── it.js       # Traductions italiennes
+│   │   └── de.js       # Traductions allemandes
 │   ├── main.js         # Point d'entrée principal
 │   ├── storage.js      # Gestion du localStorage
 │   ├── pregnancy.js    # Calculs liés à la grossesse
 │   ├── tips.js         # Conseils quotidiens
+│   ├── babyDevelopment.js # Informations de développement du bébé
+│   ├── calendar.js     # Gestion du calendrier
+│   ├── notifications.js # Gestion des notifications
 │   └── style.css       # Styles CSS
 ├── index.html          # Page HTML principale
 ├── vite.config.js      # Configuration Vite et PWA
 └── package.json        # Dépendances du projet
 ```
+
+## 🌍 Langues Supportées
+
+L'application est disponible dans les langues suivantes :
+
+- 🇫🇷 **Français** (langue par défaut)
+- 🇬🇧 **English**
+- 🇪🇸 **Español**
+- 🇮🇹 **Italiano**
+- 🇩🇪 **Deutsch**
+
+La langue de l'interface s'adapte automatiquement à la langue du navigateur, et peut être changée à tout moment via le sélecteur de langue dans l'en-tête.
 
 ## 🤝 Contribution
 

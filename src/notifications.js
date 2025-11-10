@@ -2,6 +2,7 @@
 // Handles browser notifications for appointment reminders
 
 import { loadAppointments, loadNotificationPreference } from './storage.js';
+import { t, getCurrentLanguage } from './i18n/index.js';
 
 // Check if notifications are supported
 export function isNotificationSupported() {
@@ -80,14 +81,14 @@ export function checkUpcomingAppointments() {
     // Notification 24 hours before (23-25 hours window)
     const hoursUntil = timeDiff / (1000 * 60 * 60);
     if (hoursUntil > 23 && hoursUntil <= 25) {
-      const dateStr = aptDateTime.toLocaleDateString('fr-FR', {
+      const dateStr = aptDateTime.toLocaleDateString(getCurrentLanguage(), {
         weekday: 'long',
         day: 'numeric',
         month: 'long'
       });
-      const timeStr = apt.time || 'dans la journée';
+      const timeStr = apt.time || t('inTheDay');
       
-      showNotification('Rappel: Rendez-vous demain', {
+      showNotification(t('reminderTomorrow'), {
         body: `${apt.note}\n${dateStr} ${timeStr}`,
         tag: `apt-${apt.id}-24h`
       });
@@ -97,8 +98,8 @@ export function checkUpcomingAppointments() {
     if (hoursUntil > 0.5 && hoursUntil <= 1.5) {
       const timeStr = apt.time || '';
       
-      showNotification('Rappel: Rendez-vous dans 1 heure', {
-        body: `${apt.note}${timeStr ? ' à ' + timeStr : ''}`,
+      showNotification(t('reminderHour'), {
+        body: `${apt.note}${timeStr ? ` ${t('at')} ` + timeStr : ''}`,
         tag: `apt-${apt.id}-1h`
       });
     }
@@ -131,7 +132,7 @@ export function getNotificationStatus() {
     return {
       supported: false,
       permission: 'unsupported',
-      message: 'Les notifications ne sont pas supportées par votre navigateur'
+      message: t('notificationsNotSupported')
     };
   }
   
@@ -144,14 +145,14 @@ export function getNotificationStatus() {
         supported: true,
         permission: 'granted',
         enabled: true,
-        message: 'Désactiver les notifications'
+        message: t('disableNotifications')
       };
     } else {
       return {
         supported: true,
         permission: 'granted',
         enabled: false,
-        message: 'Activer les notifications'
+        message: t('enableNotifications')
       };
     }
   }
@@ -160,13 +161,13 @@ export function getNotificationStatus() {
     return {
       supported: true,
       permission: 'denied',
-      message: 'Notifications bloquées. Autorisez-les dans les paramètres du navigateur.'
+      message: t('notificationsBlockedMessage')
     };
   }
   
   return {
     supported: true,
     permission: 'default',
-    message: 'Cliquez pour activer les notifications'
+    message: t('clickToEnableNotifications')
   };
 }

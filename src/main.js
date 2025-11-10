@@ -17,7 +17,8 @@ import {
   loadChecklists,
   toggleChecklistItem,
   addChecklistItem,
-  deleteChecklistItem
+  deleteChecklistItem,
+  saveData
 } from './storage.js';
 
 import {
@@ -29,6 +30,17 @@ import {
 } from './pregnancy.js';
 
 import { getDailyTip } from './tips.js';
+
+import { 
+  t, 
+  setLanguage, 
+  loadLanguagePreference,
+  formatDate,
+  formatDateTime,
+  getTranslationArray,
+  availableLanguages,
+  getCurrentLanguage
+} from './i18n/index.js';
 
 import {
   getWeeksInYear,
@@ -61,6 +73,15 @@ let weightChart = null;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
+  // Load language preference
+  loadLanguagePreference();
+  
+  // Initialize language selector
+  initializeLanguageSelector();
+  
+  // Update static content with current language
+  updateStaticContent();
+  
   // Check if this is the first time opening the app
   if (!isOnboardingComplete()) {
     isFirstTimeSetup = true;
@@ -92,8 +113,8 @@ function loadPregnancyTracker() {
     // Show setup prompt
     trackerElement.innerHTML = `
       <div class="setup-prompt">
-        <p>Commencez votre suivi de grossesse</p>
-        <button id="setup-btn" class="primary-btn">Configurer</button>
+        <p>${t('startTracking')}</p>
+        <button id="setup-btn" class="primary-btn">${t('configure')}</button>
       </div>
     `;
     document.getElementById('setup-btn').addEventListener('click', showSetupModal);
@@ -101,7 +122,7 @@ function loadPregnancyTracker() {
     // Show pregnancy info
     const info = calculatePregnancyWeek(pregnancyInfo.dueDate);
     const trimester = getWeekDescription(info.weeks);
-    const greeting = pregnancyInfo.name ? `Bonjour ${pregnancyInfo.name} !` : 'Bonjour !';
+    const greeting = pregnancyInfo.name ? `${t('hello')} ${pregnancyInfo.name} !` : `${t('hello')} !`;
     
     trackerElement.innerHTML = `
       <div class="pregnancy-display">
@@ -109,7 +130,7 @@ function loadPregnancyTracker() {
         <div class="week-info">${formatWeekDisplay(info.weeks, info.days)}</div>
         <div class="days-left">${formatDaysRemaining(info.daysRemaining)}</div>
         <div class="trimester">${trimester}</div>
-        <button id="edit-pregnancy-btn" class="secondary-btn" style="margin-top: 1rem; width: auto; padding: 0.5rem 1rem;">Modifier</button>
+        <button id="edit-pregnancy-btn" class="secondary-btn" style="margin-top: 1rem; width: auto; padding: 0.5rem 1rem;">${t('modify')}</button>
       </div>
     `;
     document.getElementById('edit-pregnancy-btn').addEventListener('click', showSetupModal);
@@ -216,12 +237,12 @@ function setupEventListeners() {
     
     // Validate inputs
     if (!name) {
-      alert('Veuillez entrer votre prénom');
+      alert(t('pleaseEnterName'));
       return;
     }
     
     if (!dueDate) {
-      alert('Veuillez sélectionner une date');
+      alert(t('pleaseSelectDate'));
       return;
     }
     
@@ -341,13 +362,13 @@ function loadNotesList() {
   const notesList = document.getElementById('notes-list');
   
   if (notes.length === 0) {
-    notesList.innerHTML = '<div class="empty-state">Aucune note pour le moment</div>';
+    notesList.innerHTML = `<div class="empty-state">${t('noNotes')}</div>`;
     return;
   }
   
   notesList.innerHTML = notes.map(note => {
     const date = new Date(note.date);
-    const formattedDate = date.toLocaleDateString('fr-FR', {
+    const formattedDate = formatDateTime(date, {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -360,7 +381,7 @@ function loadNotesList() {
         <div class="note-date">${formattedDate}</div>
         <div class="note-content">${escapeHtml(note.content)}</div>
         <div class="note-actions">
-          <button class="delete-btn" onclick="window.deleteNoteHandler(${note.id})">🗑️ Supprimer</button>
+          <button class="delete-btn" onclick="window.deleteNoteHandler(${note.id})">${t('deleteNote')}</button>
         </div>
       </div>
     `;
@@ -373,20 +394,20 @@ function loadUpcomingAppointments() {
   const upcomingElement = document.getElementById('upcoming-appointments');
   
   if (upcoming.length === 0) {
-    upcomingElement.innerHTML = '<div class="empty-state">Aucun rendez-vous à venir</div>';
+    upcomingElement.innerHTML = `<div class="empty-state">${t('noAppointments')}</div>`;
     return;
   }
   
   upcomingElement.innerHTML = upcoming.map(apt => {
     const date = new Date(apt.date);
-    const formattedDate = date.toLocaleDateString('fr-FR', {
+    const formattedDate = formatDate(date, {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
     
-    const timeDisplay = apt.time ? ` à ${apt.time}` : '';
+    const timeDisplay = apt.time ? ` ${t('at')} ${apt.time}` : '';
     
     return `
       <div class="upcoming-appointment-item" data-id="${apt.id}">
@@ -420,7 +441,7 @@ function loadCalendarView() {
     
     if (hasAppointments) classes += ' has-appointments';
     
-    const monthName = week.startDate.toLocaleDateString('fr-FR', { month: 'short' });
+    const monthName = formatDate(week.startDate, { month: 'short' });
     
     return `
       <div class="${classes}" 
@@ -446,7 +467,7 @@ function showWeekDetails(weekStartISO, weekEndISO) {
   
   // Format date range
   const dateRange = formatWeekRange(weekStart, weekEnd);
-  title.textContent = `Semaine ${dateRange.short}`;
+  title.textContent = `${t('week')} ${dateRange.short}`;
   
   // Get appointments for this week
   const appointments = getAppointmentsForWeek(weekStart, weekEnd);
@@ -456,29 +477,29 @@ function showWeekDetails(weekStartISO, weekEndISO) {
   
   let contentHTML = `
     <div class="week-detail-section">
-      <h3>📅 Période</h3>
+      <h3>${t('period')}</h3>
       <p>${dateRange.long}</p>
       <p style="color: var(--text-light);">${dateRange.short}</p>
     </div>
   `;
   
   if (pregnancyInfo) {
-    const trimesterText = pregnancyInfo.trimester === 1 ? '1er trimestre' : 
-                          pregnancyInfo.trimester === 2 ? '2e trimestre' : '3e trimestre';
+    const trimesterText = t(`trimester${pregnancyInfo.trimester}`);
+    const dayWord = pregnancyInfo.days > 1 ? t('days') : t('day');
     
     contentHTML += `
       <div class="week-detail-section">
-        <h3>🤰 Votre Grossesse</h3>
+        <h3>${t('yourPregnancy')}</h3>
         <div class="pregnancy-info-detail">
-          <p><strong>Trimestre:</strong> ${trimesterText}</p>
-          <p><strong>Semaine de grossesse:</strong> Semaine ${pregnancyInfo.weeks} + ${pregnancyInfo.days} jour${pregnancyInfo.days > 1 ? 's' : ''}</p>
-          <p><strong>SA (Semaines d'Aménorrhée):</strong> ${pregnancyInfo.weeks + 2} SA</p>
-          <p><strong>SG (Semaines de Grossesse):</strong> ${pregnancyInfo.weeks} SG</p>
+          <p><strong>${t('trimester')}:</strong> ${trimesterText}</p>
+          <p><strong>${t('pregnancyWeek')}:</strong> ${t('week')} ${pregnancyInfo.weeks} + ${pregnancyInfo.days} ${dayWord}</p>
+          <p><strong>${t('weeksSA')}:</strong> ${pregnancyInfo.weeks + 2} SA</p>
+          <p><strong>${t('weeksSG')}:</strong> ${pregnancyInfo.weeks} SG</p>
         </div>
       </div>
       
       <div class="week-detail-section">
-        <h3>👶 Développement de Bébé</h3>
+        <h3>${t('babyDevelopment')}</h3>
         <div class="baby-development-info">
           ${pregnancyInfo.development}
         </div>
@@ -488,21 +509,21 @@ function showWeekDetails(weekStartISO, weekEndISO) {
   
   contentHTML += `
     <div class="week-detail-section">
-      <h3>📅 Rendez-vous de la Semaine</h3>
+      <h3>${t('weekAppointments')}</h3>
   `;
   
   if (appointments.length === 0) {
-    contentHTML += '<p style="color: var(--text-light); font-style: italic;">Aucun rendez-vous cette semaine</p>';
+    contentHTML += `<p style="color: var(--text-light); font-style: italic;">${t('noWeekAppointments')}</p>`;
   } else {
     contentHTML += '<div class="week-appointments-list">';
     appointments.forEach(apt => {
       const date = new Date(apt.date);
-      const formattedDate = date.toLocaleDateString('fr-FR', {
+      const formattedDate = formatDate(date, {
         weekday: 'long',
         day: 'numeric',
         month: 'long'
       });
-      const timeDisplay = apt.time ? ` à ${apt.time}` : '';
+      const timeDisplay = apt.time ? ` ${t('at')} ${apt.time}` : '';
       
       contentHTML += `
         <div class="week-appointment-item">
@@ -532,7 +553,7 @@ function loadWeightHistoryList() {
   const canvas = document.getElementById('weight-chart');
   
   if (history.length === 0) {
-    historyElement.innerHTML = '<div class="empty-state">Aucune mesure enregistrée</div>';
+    historyElement.innerHTML = `<div class="empty-state">${t('noWeightRecords')}</div>`;
     if (weightChart) {
       weightChart.destroy();
       weightChart = null;
@@ -562,7 +583,7 @@ function loadWeightHistoryList() {
     data: {
       labels: labels,
       datasets: [{
-        label: 'Poids (kg)',
+        label: t('weight'),
         data: data,
         borderColor: '#FF6B9D',
         backgroundColor: 'rgba(255, 107, 157, 0.1)',
@@ -596,7 +617,7 @@ function loadWeightHistoryList() {
             title: function(context) {
               const timestamp = context[0].parsed.x;
               const date = new Date(timestamp);
-              return date.toLocaleDateString('fr-FR', {
+              return formatDate(date, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -619,7 +640,7 @@ function loadWeightHistoryList() {
           },
           title: {
             display: true,
-            text: 'Date',
+            text: t('appointmentDate'),
             font: {
               size: 12
             }
@@ -632,7 +653,7 @@ function loadWeightHistoryList() {
           beginAtZero: false,
           title: {
             display: true,
-            text: 'Poids (kg)',
+            text: t('weight'),
             font: {
               size: 12
             }
@@ -648,13 +669,78 @@ function loadWeightHistoryList() {
   });
 }
 
+// Get default checklists with current language
+function getDefaultChecklists() {
+  const maternityItems = getTranslationArray('checklistMaternity');
+  const babyArrivalItems = getTranslationArray('checklistBabyArrival');
+  
+  return {
+    maternity: {
+      title: t('maternityPreparation'),
+      items: maternityItems.map((text, index) => ({
+        id: index + 1,
+        text,
+        checked: false
+      }))
+    },
+    babyArrival: {
+      title: t('babyArrival'),
+      items: babyArrivalItems.map((text, index) => ({
+        id: index + 1,
+        text,
+        checked: false
+      }))
+    }
+  };
+}
+
 // Checklists Display
 function loadChecklistsDisplay() {
-  const checklists = loadChecklists();
+  let savedChecklists = loadChecklists();
+  const defaultChecklists = getDefaultChecklists(); // Get defaults for current language
+
+  // If no saved checklists, initialize with defaults and save
+  if (!savedChecklists) {
+    savedChecklists = defaultChecklists;
+    saveData('bumpcare_checklists', savedChecklists);
+  } else {
+    // Merge saved checklists with current language defaults
+    // This ensures default items are translated and new default items are added
+    const mergeChecklistItems = (savedItems, defaultItems) => {
+      const mergedItems = [];
+      const defaultItemMap = new Map(defaultItems.map(item => [item.id, item]));
+
+      // Add saved items, updating text for default ones
+      savedItems.forEach(savedItem => {
+        const defaultEquivalent = defaultItemMap.get(savedItem.id);
+        if (defaultEquivalent) {
+          // It's a default item, update its text with the current language translation
+          mergedItems.push({ ...savedItem, text: defaultEquivalent.text });
+          defaultItemMap.delete(savedItem.id); // Mark as processed
+        } else {
+          // It's a custom item, keep as is
+          mergedItems.push(savedItem);
+        }
+      });
+
+      // Add any new default items that weren't in saved items
+      defaultItemMap.forEach(newItem => {
+        mergedItems.push(newItem);
+      });
+      return mergedItems;
+    };
+
+    savedChecklists.maternity.items = mergeChecklistItems(savedChecklists.maternity.items, defaultChecklists.maternity.items);
+    savedChecklists.babyArrival.items = mergeChecklistItems(savedChecklists.babyArrival.items, defaultChecklists.babyArrival.items);
+    
+    // Ensure titles are updated to current language
+    savedChecklists.maternity.title = defaultChecklists.maternity.title;
+    savedChecklists.babyArrival.title = defaultChecklists.babyArrival.title;
+  }
   
   // Load maternity checklist
   const maternityContainer = document.getElementById('maternity-checklist');
-  maternityContainer.innerHTML = checklists.maternity.items.map(item => `
+  maternityContainer.innerHTML = savedChecklists.maternity.items.map(item => `
     <div class="checklist-item ${item.checked ? 'checked' : ''}">
       <input type="checkbox" 
              id="maternity-${item.id}" 
@@ -667,7 +753,7 @@ function loadChecklistsDisplay() {
   
   // Load baby arrival checklist
   const babyArrivalContainer = document.getElementById('baby-arrival-checklist');
-  babyArrivalContainer.innerHTML = checklists.babyArrival.items.map(item => `
+  babyArrivalContainer.innerHTML = savedChecklists.babyArrival.items.map(item => `
     <div class="checklist-item ${item.checked ? 'checked' : ''}">
       <input type="checkbox" 
              id="baby-arrival-${item.id}" 
@@ -719,23 +805,23 @@ async function handleNotificationPermissionRequest() {
     const areNotificationsEnabled = loadNotificationPreference();
     saveNotificationPreference(!areNotificationsEnabled);
     if (!areNotificationsEnabled) {
-      alert('✓ Notifications réactivées !');
+      alert(t('notificationsReactivated'));
     } else {
-      alert('Notifications désactivées. Vous ne recevrez plus de rappels.');
+      alert(t('notificationsDeactivated'));
     }
   } else if (permission === 'denied') {
-    alert('❌ Notifications bloquées. Vous devez les autoriser dans les paramètres de votre navigateur.');
+    alert(t('notificationsBlockedAlert'));
     return;
   } else {
     // Request permission for the first time
     const newPermission = await requestNotificationPermission();
     if (newPermission === 'granted') {
       saveNotificationPreference(true);
-      alert('✓ Notifications activées ! Vous recevrez des rappels pour vos rendez-vous.');
+      alert(t('notificationsActivated'));
     } else if (newPermission === 'denied') {
       // User denied permission, so we save the preference as false
       saveNotificationPreference(false);
-      alert('❌ Notifications refusées. Vous pouvez les activer dans les paramètres de votre navigateur.');
+      alert(t('notificationsRefused'));
     }
   }
 
@@ -744,14 +830,14 @@ async function handleNotificationPermissionRequest() {
 
 // Delete handlers (exposed globally for inline onclick)
 window.deleteNoteHandler = (noteId) => {
-  if (confirm('Supprimer cette note ?')) {
+  if (confirm(t('confirmDeleteNote'))) {
     deleteNote(noteId);
     loadNotesList();
   }
 };
 
 window.deleteAppointmentHandler = (aptId) => {
-  if (confirm('Supprimer ce rendez-vous ?')) {
+  if (confirm(t('confirmDeleteNote'))) {
     deleteAppointment(aptId);
     loadCalendarView();
     loadUpcomingAppointments();
@@ -768,7 +854,7 @@ window.toggleChecklistItemHandler = (checklistType, itemId) => {
 };
 
 window.deleteChecklistItemHandler = (checklistType, itemId) => {
-  if (confirm('Supprimer cet article de la liste ?')) {
+  if (confirm(t('confirmDeleteItem'))) {
     deleteChecklistItem(checklistType, itemId);
     loadChecklistsDisplay();
   }
@@ -779,6 +865,168 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// Language selector functionality
+function initializeLanguageSelector() {
+  // Create language selector in the footer
+  const footer = document.querySelector('footer');
+  const langSelector = document.createElement('div');
+  langSelector.className = 'language-selector';
+  langSelector.innerHTML = `
+    <button id="lang-selector-btn" class="lang-btn" aria-label="Select language">
+      🌐 ${getCurrentLanguage().toUpperCase()}
+    </button>
+    <div id="lang-dropdown" class="lang-dropdown hidden">
+      ${availableLanguages.map(lang => `
+        <button class="lang-option ${getCurrentLanguage() === lang.code ? 'active' : ''}" 
+                data-lang="${lang.code}">
+          ${lang.flag} ${lang.label}
+        </button>
+      `).join('')}
+    </div>
+  `;
+  footer.appendChild(langSelector);
+  
+  // Toggle dropdown
+  const langBtn = document.getElementById('lang-selector-btn');
+  const dropdown = document.getElementById('lang-dropdown');
+  
+  langBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('hidden');
+  });
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', () => {
+    dropdown.classList.add('hidden');
+  });
+  
+  // Handle language selection
+  dropdown.querySelectorAll('.lang-option').forEach(option => {
+    option.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newLang = option.dataset.lang;
+      if (setLanguage(newLang)) {
+        updateUILanguage();
+        dropdown.classList.add('hidden');
+      }
+    });
+  });
+}
+
+// Update UI with new language
+function updateUILanguage() {
+  // Reload all dynamic content
+  loadPregnancyTracker();
+  loadNotesList();
+  loadCalendarView();
+  loadUpcomingAppointments();
+  loadWeightHistoryList();
+  loadChecklistsDisplay();
+  loadDailyTip();
+  loadNotificationSettings();
+  
+  // Update language button
+  const langBtn = document.getElementById('lang-selector-btn');
+  if (langBtn) {
+    langBtn.textContent = `🌐 ${getCurrentLanguage().toUpperCase()}`;
+  }
+  
+  // Update active state in dropdown
+  document.querySelectorAll('.lang-option').forEach(option => {
+    if (option.dataset.lang === getCurrentLanguage()) {
+      option.classList.add('active');
+    } else {
+      option.classList.remove('active');
+    }
+  });
+  
+  // Update static HTML content
+  updateStaticContent();
+}
+
+// Update static HTML content with translations
+function updateStaticContent() {
+  // Helper function to safely update element
+  const safeUpdate = (selector, property, value) => {
+    const element = document.querySelector(selector);
+    if (element) {
+      element[property] = value;
+    }
+  };
+  
+  // Update HTML lang attribute
+  document.documentElement.lang = getCurrentLanguage();
+  
+  // Update page title
+  document.title = `BumpCare - ${t('tagline')}`;
+  
+  // Update header
+  safeUpdate('header h1', 'textContent', `🤰 ${t('appTitle')}`);
+  safeUpdate('header .tagline', 'textContent', t('tagline'));
+  
+  // Update tabs
+  const tabs = document.querySelectorAll('.tab-btn');
+  const tabKeys = ['appointments', 'notes', 'preparation', 'health'];
+  tabs.forEach((tab, index) => {
+    tab.textContent = t(tabKeys[index]);
+  });
+  
+  // Update section titles
+  safeUpdate('.pregnancy-info h2', 'textContent', t('myPregnancy'));
+  safeUpdate('#tab-appointments .card:nth-child(1) h2', 'textContent', t('myAppointments'));
+  safeUpdate('#tab-appointments .card:nth-child(2) h2', 'textContent', t('calendar'));
+  safeUpdate('#tab-appointments .card:nth-child(3) h2', 'textContent', t('addAppointment'));
+  safeUpdate('#tab-appointments .card:nth-child(4) h2', 'textContent', t('notifications'));
+  safeUpdate('#tab-appointments .card:nth-child(4) p', 'textContent', t('notificationDescription'));
+  
+  safeUpdate('#tab-notes h2', 'textContent', t('myNotes'));
+  safeUpdate('#note-input', 'placeholder', t('notePlaceholder'));
+  safeUpdate('#add-note-btn', 'textContent', t('addNote'));
+  
+  safeUpdate('#tab-preparation .card:nth-child(1) h2', 'textContent', t('maternityPreparation'));
+  safeUpdate('#tab-preparation .card:nth-child(1) p', 'textContent', t('maternityDescription'));
+  safeUpdate('#maternity-item-input', 'placeholder', t('addCustomItem'));
+  
+  safeUpdate('#tab-preparation .card:nth-child(2) h2', 'textContent', t('babyArrival'));
+  safeUpdate('#tab-preparation .card:nth-child(2) p', 'textContent', t('babyArrivalDescription'));
+  safeUpdate('#baby-arrival-item-input', 'placeholder', t('addCustomItem'));
+  
+  safeUpdate('#tab-health h2', 'textContent', t('healthTracking'));
+  safeUpdate('#tab-health .health-item label', 'textContent', t('weight'));
+  safeUpdate('#add-weight-btn', 'textContent', t('record'));
+  
+  // Update tips section - using alternative selector
+  const tipsCard = document.querySelector('#tips-section')?.closest('.card');
+  if (tipsCard) {
+    const h2 = tipsCard.querySelector('h2');
+    if (h2) h2.textContent = t('dailyTip');
+  }
+  
+  // Update footer
+  const footerP = document.querySelector('footer p:first-child');
+  if (footerP) footerP.textContent = t('footerText');
+  safeUpdate('footer .version', 'textContent', t('version'));
+  
+  // Update setup modal
+  safeUpdate('#setup-modal h2', 'textContent', t('setupTitle'));
+  safeUpdate('label[for="name"]', 'textContent', t('firstName'));
+  safeUpdate('#name', 'placeholder', t('firstNamePlaceholder'));
+  safeUpdate('.date-choice-section > p', 'textContent', t('chooseOption'));
+  
+  const radioOptions = document.querySelectorAll('.radio-option span');
+  if (radioOptions[0]) radioOptions[0].textContent = t('dueDate');
+  if (radioOptions[1]) radioOptions[1].textContent = t('lmpDate');
+  
+  safeUpdate('#setup-form button[type="submit"]', 'textContent', t('save'));
+  safeUpdate('#cancel-setup', 'textContent', t('cancel'));
+  
+  // Update appointment form
+  safeUpdate('#appointment-date', 'placeholder', t('appointmentDate'));
+  safeUpdate('#appointment-time', 'placeholder', t('appointmentTime'));
+  safeUpdate('#appointment-note', 'placeholder', t('appointmentNote'));
+  safeUpdate('#add-appointment-btn', 'textContent', t('add'));
 }
 
 // Register service worker for PWA

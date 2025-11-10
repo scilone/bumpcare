@@ -33,29 +33,32 @@ export function getTrimester(weeks) {
   return 3;
 }
 
+import { t } from './i18n/index.js';
+
 export function getWeekDescription(weeks) {
   const trimester = getTrimester(weeks);
-  return `${trimester}${trimester === 1 ? 'er' : 'e'} trimestre`;
+  return t(`trimester${trimester}`);
 }
 
 export function formatDaysRemaining(days) {
   if (days < 0) {
-    return 'Date dépassée';
+    return t('dateExpired');
   }
   if (days === 0) {
-    return 'C\'est aujourd\'hui !';
+    return t('dueToday');
   }
   if (days === 1) {
-    return '1 jour restant';
+    return t('dayRemainingFormat');
   }
-  return `${days} jours restants`;
+  return t('daysRemainingFormat', { count: days });
 }
 
 export function formatWeekDisplay(weeks, days) {
   if (days === 0) {
-    return `Semaine ${weeks}`;
+    return `${t('week')} ${weeks}`;
   }
-  return `Semaine ${weeks} + ${days} jour${days > 1 ? 's' : ''}`;
+  const dayWord = days > 1 ? t('days') : t('day');
+  return `${t('week')} ${weeks} + ${days} ${dayWord}`;
 }
 
 // Calculate due date from last menstrual period (LMP)

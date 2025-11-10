@@ -180,54 +180,9 @@ export function loadNotificationPreference() {
 }
 
 // Checklists Management
-export function getDefaultChecklists() {
-  return {
-    maternity: {
-      title: "Préparation pour la Maternité",
-      items: [
-        { id: 1, text: "Documents administratifs (carte d'identité, carte vitale, livret de famille)", checked: false },
-        { id: 2, text: "Dossier médical de grossesse et examens", checked: false },
-        { id: 3, text: "Chemises de nuit ou pyjamas confortables (3-4)", checked: false },
-        { id: 4, text: "Soutiens-gorge d'allaitement", checked: false },
-        { id: 5, text: "Sous-vêtements adaptés (culottes jetables ou en coton)", checked: false },
-        { id: 6, text: "Serviettes hygiéniques maternité", checked: false },
-        { id: 7, text: "Robe de chambre et chaussons", checked: false },
-        { id: 8, text: "Trousse de toilette (brosse à dents, shampooing, savon, etc.)", checked: false },
-        { id: 9, text: "Serviettes de toilette", checked: false },
-        { id: 10, text: "Chargeur de téléphone", checked: false },
-        { id: 11, text: "En-cas et bouteille d'eau", checked: false },
-        { id: 12, text: "Tenue confortable pour le retour à la maison", checked: false }
-      ]
-    },
-    babyArrival: {
-      title: "Arrivée de Bébé à la Maison",
-      items: [
-        { id: 1, text: "Siège-auto homologué et installé", checked: false },
-        { id: 2, text: "Berceau ou lit bébé avec matelas ferme", checked: false },
-        { id: 3, text: "Linge de lit adapté (draps-housses, gigoteuse)", checked: false },
-        { id: 4, text: "Bodies et pyjamas (taille naissance et 1 mois)", checked: false },
-        { id: 5, text: "Bonnets et chaussettes", checked: false },
-        { id: 6, text: "Couverture légère", checked: false },
-        { id: 7, text: "Couches nouveau-né", checked: false },
-        { id: 8, text: "Lingettes et produits de toilette pour bébé", checked: false },
-        { id: 9, text: "Table à langer ou matelas à langer", checked: false },
-        { id: 10, text: "Thermomètre pour bébé", checked: false },
-        { id: 11, text: "Biberons et stérilisateur (si nécessaire)", checked: false },
-        { id: 12, text: "Lait infantile (si non-allaitement)", checked: false },
-        { id: 13, text: "Coussin d'allaitement (si allaitement)", checked: false },
-        { id: 14, text: "Baignoire pour bébé", checked: false },
-        { id: 15, text: "Numéros d'urgence (pédiatre, sage-femme, hôpital)", checked: false }
-      ]
-    }
-  };
-}
-
+// Note: Default checklists are now managed in main.js with translations
 export function loadChecklists() {
   const saved = loadData(STORAGE_KEYS.CHECKLISTS);
-  if (!saved) {
-    // Return default checklists if none exist
-    return getDefaultChecklists();
-  }
   return saved;
 }
 
