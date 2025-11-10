@@ -788,6 +788,7 @@ footer {
 .checklist-item {
   display: flex;
   align-items: center;
+  gap: 0.75rem; /* Use gap for spacing */
   padding: 0.75rem;
   margin-bottom: 0.5rem;
   background: var(--bg-light);
@@ -811,16 +812,18 @@ footer {
 .checklist-item input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  margin-right: 0.75rem;
   cursor: pointer;
   flex-shrink: 0;
+  margin: 0; /* Remove margin, use gap instead */
 }
 
 .checklist-item label {
-  flex: 1;
+  flex: 1; /* Allow label to take up available space */
   cursor: pointer;
   font-size: 0.95rem;
   line-height: 1.4;
+  /* The following is to prevent the label from shrinking if the text is long */
+  min-width: 0;
 }
 
 .delete-checklist-btn {
@@ -828,10 +831,22 @@ footer {
   border: none;
   cursor: pointer;
   font-size: 1.2rem;
-  padding: 0.25rem 0.5rem;
   opacity: 0.5;
   transition: opacity 0.2s ease;
   flex-shrink: 0;
+  
+  /* Make button a fixed size square */
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  
+  /* Center the icon inside */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Ensure consistent alignment */
+  margin: 0;
 }
 
 .delete-checklist-btn:hover {
@@ -840,6 +855,7 @@ footer {
 
 .add-item-section {
   display: flex;
+  align-items: center; /* Vertically align items */
   gap: 0.5rem;
   margin-top: 1rem;
   padding-top: 1rem;
@@ -849,9 +865,12 @@ footer {
 .add-item-section input {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 2px solid #ddd; /* Match button border width */
   border-radius: 8px;
   font-size: 0.95rem;
+  margin-bottom: 0; /* Remove margin to fix alignment */
+  line-height: 1; /* Normalize line height */
+  vertical-align: middle; /* Ensure vertical alignment */
 }
 
 .add-item-section input:focus {
@@ -860,8 +879,16 @@ footer {
 }
 
 .add-item-section button {
-  padding: 0.75rem 1rem;
-  white-space: nowrap;
+  flex-shrink: 0; /* Prevent button from shrinking */
+  width: 44px; /* Good tap size for mobile */
+  height: 44px;
+  padding: 0;
+  font-size: 1.5rem; /* Make the icon bigger */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle; /* Ensure vertical alignment */
 }
 
 /* Print styles */
