@@ -116,13 +116,6 @@ Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou un
 
 ISC
 
-## 🌟 Feuille de Route
-
-- [x] Rappels/notifications pour les rendez-vous
-- [x] Liste de préparation pour la maternité
-- [ ] Mode sombre
-- [ ] Support multilingue
-- [ ] Calculateur de contractions
 
 ## 💬 Support
 
