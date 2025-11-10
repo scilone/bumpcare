@@ -36,6 +36,7 @@
       <div class="tabs-navigation">
         <button class="tab-btn active" data-tab="appointments">📅 Rendez-vous</button>
         <button class="tab-btn" data-tab="notes">📝 Notes</button>
+        <button class="tab-btn" data-tab="preparation">🧳 Préparation</button>
         <button class="tab-btn" data-tab="health">💪 Santé</button>
       </div>
 
@@ -88,6 +89,37 @@
               <textarea id="note-input" placeholder="Notez vos pensées, symptômes, questions..."></textarea>
               <button id="add-note-btn" class="primary-btn">Ajouter une note</button>
               <div id="notes-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section de préparation -->
+        <section class="tab-panel" id="tab-preparation">
+          <div class="card">
+            <h2>🧳 Préparation pour la Maternité</h2>
+            <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">
+              Liste des essentiels à préparer pour votre séjour à la maternité
+            </p>
+            <div id="maternity-checklist" class="checklist">
+              <!-- Items will be loaded dynamically -->
+            </div>
+            <div class="add-item-section">
+              <input type="text" id="maternity-item-input" placeholder="Ajouter un article personnalisé...">
+              <button id="add-maternity-item-btn" class="secondary-btn" aria-label="Ajouter un article">➕</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>🏠 Arrivée de Bébé à la Maison</h2>
+            <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">
+              Liste des essentiels pour accueillir bébé à la maison
+            </p>
+            <div id="baby-arrival-checklist" class="checklist">
+              <!-- Items will be loaded dynamically -->
+            </div>
+            <div class="add-item-section">
+              <input type="text" id="baby-arrival-item-input" placeholder="Ajouter un article personnalisé...">
+              <button id="add-baby-arrival-item-btn" class="secondary-btn" aria-label="Ajouter un article">➕</button>
             </div>
           </div>
         </section>
