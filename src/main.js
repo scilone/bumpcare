@@ -47,6 +47,9 @@ let weightChart = null;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize theme
+  initializeTheme();
+  
   // Check if this is the first time opening the app
   if (!isOnboardingComplete()) {
     isFirstTimeSetup = true;
@@ -56,6 +59,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   setupEventListeners();
 });
+
+// Theme Management
+function initializeTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+}
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  
+  // Update toggle button icon
+  const toggleBtn = document.getElementById('theme-toggle');
+  if (toggleBtn) {
+    toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    toggleBtn.setAttribute('aria-label', theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre');
+  }
+  
+  // Update PWA theme-color meta tag
+  const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+  if (metaThemeColor) {
+    metaThemeColor.setAttribute('content', theme === 'dark' ? '#1E1E1E' : '#FF6B9D');
+  }
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  setTheme(newTheme);
+}
 
 function initializeApp() {
   loadPregnancyTracker();
@@ -143,6 +176,12 @@ function hideSetupModal() {
 }
 
 function setupEventListeners() {
+  // Theme toggle
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+  }
+  
   // Tab navigation
   const tabButtons = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');
