@@ -696,17 +696,51 @@ function getDefaultChecklists() {
 
 // Checklists Display
 function loadChecklistsDisplay() {
-  let checklists = loadChecklists();
-  
-  // If no saved checklists, initialize with defaults
-  if (!checklists) {
-    checklists = getDefaultChecklists();
-    saveData('bumpcare_checklists', checklists);
+  let savedChecklists = loadChecklists();
+  const defaultChecklists = getDefaultChecklists(); // Get defaults for current language
+
+  // If no saved checklists, initialize with defaults and save
+  if (!savedChecklists) {
+    savedChecklists = defaultChecklists;
+    saveData('bumpcare_checklists', savedChecklists);
+  } else {
+    // Merge saved checklists with current language defaults
+    // This ensures default items are translated and new default items are added
+    const mergeChecklistItems = (savedItems, defaultItems) => {
+      const mergedItems = [];
+      const defaultItemMap = new Map(defaultItems.map(item => [item.id, item]));
+
+      // Add saved items, updating text for default ones
+      savedItems.forEach(savedItem => {
+        const defaultEquivalent = defaultItemMap.get(savedItem.id);
+        if (defaultEquivalent) {
+          // It's a default item, update its text with the current language translation
+          mergedItems.push({ ...savedItem, text: defaultEquivalent.text });
+          defaultItemMap.delete(savedItem.id); // Mark as processed
+        } else {
+          // It's a custom item, keep as is
+          mergedItems.push(savedItem);
+        }
+      });
+
+      // Add any new default items that weren't in saved items
+      defaultItemMap.forEach(newItem => {
+        mergedItems.push(newItem);
+      });
+      return mergedItems;
+    };
+
+    savedChecklists.maternity.items = mergeChecklistItems(savedChecklists.maternity.items, defaultChecklists.maternity.items);
+    savedChecklists.babyArrival.items = mergeChecklistItems(savedChecklists.babyArrival.items, defaultChecklists.babyArrival.items);
+    
+    // Ensure titles are updated to current language
+    savedChecklists.maternity.title = defaultChecklists.maternity.title;
+    savedChecklists.babyArrival.title = defaultChecklists.babyArrival.title;
   }
   
   // Load maternity checklist
   const maternityContainer = document.getElementById('maternity-checklist');
-  maternityContainer.innerHTML = checklists.maternity.items.map(item => `
+  maternityContainer.innerHTML = savedChecklists.maternity.items.map(item => `
     <div class="checklist-item ${item.checked ? 'checked' : ''}">
       <input type="checkbox" 
              id="maternity-${item.id}" 
@@ -719,7 +753,7 @@ function loadChecklistsDisplay() {
   
   // Load baby arrival checklist
   const babyArrivalContainer = document.getElementById('baby-arrival-checklist');
-  babyArrivalContainer.innerHTML = checklists.babyArrival.items.map(item => `
+  babyArrivalContainer.innerHTML = savedChecklists.babyArrival.items.map(item => `
     <div class="checklist-item ${item.checked ? 'checked' : ''}">
       <input type="checkbox" 
              id="baby-arrival-${item.id}" 
@@ -835,8 +869,8 @@ function escapeHtml(text) {
 
 // Language selector functionality
 function initializeLanguageSelector() {
-  // Create language selector in the header
-  const header = document.querySelector('header');
+  // Create language selector in the footer
+  const footer = document.querySelector('footer');
   const langSelector = document.createElement('div');
   langSelector.className = 'language-selector';
   langSelector.innerHTML = `
@@ -852,7 +886,7 @@ function initializeLanguageSelector() {
       `).join('')}
     </div>
   `;
-  header.appendChild(langSelector);
+  footer.appendChild(langSelector);
   
   // Toggle dropdown
   const langBtn = document.getElementById('lang-selector-btn');
