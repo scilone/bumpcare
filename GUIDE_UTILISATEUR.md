@@ -95,6 +95,12 @@ L'application calcule automatiquement :
 - Cours de préparation à l'accouchement
 - Analyses médicales
 
+**Notifications de rappel** :
+- Activez les notifications pour recevoir des rappels
+- Rappel automatique 24 heures avant le rendez-vous
+- Rappel automatique 1 heure avant le rendez-vous
+- Cliquez sur "Activer les notifications" dans la section Notifications
+
 **Supprimer un rendez-vous** :
 - Cliquez sur "🗑️" à côté du rendez-vous
 - Confirmez la suppression

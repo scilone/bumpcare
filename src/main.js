@@ -11,7 +11,9 @@ import {
   loadWeightHistory,
   addWeight,
   isOnboardingComplete,
-  setOnboardingComplete
+  setOnboardingComplete,
+  loadNotificationPreference,
+  saveNotificationPreference
 } from './storage.js';
 
 import {
@@ -33,6 +35,14 @@ import {
   getUpcomingAppointments,
   weekHasAppointments
 } from './calendar.js';
+
+import {
+  initializeNotificationSystem,
+  requestNotificationPermission,
+  getNotificationStatus,
+  getNotificationPermission
+} from './notifications.js';
+
 import { Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, Filler } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
@@ -64,6 +74,8 @@ function initializeApp() {
   loadUpcomingAppointments();
   loadWeightHistoryList();
   loadDailyTip();
+  loadNotificationSettings();
+  initializeNotificationSystem();
 }
 
 // Pregnancy Tracker
@@ -289,6 +301,12 @@ function setupEventListeners() {
       handleWeightSubmit();
     }
   });
+  
+  // Notification settings
+  const notificationBtn = document.getElementById('notification-settings-btn');
+  if (notificationBtn) {
+    notificationBtn.addEventListener('click', handleNotificationPermissionRequest);
+  }
 }
 
 // Notes List
@@ -608,6 +626,63 @@ function loadWeightHistoryList() {
 function loadDailyTip() {
   const tip = getDailyTip();
   document.querySelector('.tip').textContent = tip;
+}
+
+// Notification Settings
+function loadNotificationSettings() {
+  const notificationBtn = document.getElementById('notification-settings-btn');
+  if (!notificationBtn) return;
+  
+  const status = getNotificationStatus();
+  
+  // Update button text and state
+  notificationBtn.textContent = status.message;
+  
+  if (status.permission === 'granted') {
+    notificationBtn.disabled = false;
+    if (status.enabled) {
+      notificationBtn.classList.add('active');
+    } else {
+      notificationBtn.classList.remove('active');
+    }
+  } else if (status.permission === 'denied') {
+    notificationBtn.disabled = true;
+    notificationBtn.classList.remove('active');
+  } else { // default or unsupported
+    notificationBtn.disabled = !status.supported;
+    notificationBtn.classList.remove('active');
+  }
+}
+
+async function handleNotificationPermissionRequest() {
+  const permission = getNotificationPermission();
+
+  if (permission === 'granted') {
+    // Toggle the preference
+    const areNotificationsEnabled = loadNotificationPreference();
+    saveNotificationPreference(!areNotificationsEnabled);
+    if (!areNotificationsEnabled) {
+      alert('✓ Notifications réactivées !');
+    } else {
+      alert('Notifications désactivées. Vous ne recevrez plus de rappels.');
+    }
+  } else if (permission === 'denied') {
+    alert('❌ Notifications bloquées. Vous devez les autoriser dans les paramètres de votre navigateur.');
+    return;
+  } else {
+    // Request permission for the first time
+    const newPermission = await requestNotificationPermission();
+    if (newPermission === 'granted') {
+      saveNotificationPreference(true);
+      alert('✓ Notifications activées ! Vous recevrez des rappels pour vos rendez-vous.');
+    } else if (newPermission === 'denied') {
+      // User denied permission, so we save the preference as false
+      saveNotificationPreference(false);
+      alert('❌ Notifications refusées. Vous pouvez les activer dans les paramètres de votre navigateur.');
+    }
+  }
+
+  loadNotificationSettings();
 }
 
 // Delete handlers (exposed globally for inline onclick)
