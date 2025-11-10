@@ -33,6 +33,13 @@ import {
   getUpcomingAppointments,
   weekHasAppointments
 } from './calendar.js';
+
+import {
+  initializeNotificationSystem,
+  requestNotificationPermission,
+  getNotificationStatus
+} from './notifications.js';
+
 import { Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, Filler } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
@@ -64,6 +71,8 @@ function initializeApp() {
   loadUpcomingAppointments();
   loadWeightHistoryList();
   loadDailyTip();
+  loadNotificationSettings();
+  initializeNotificationSystem();
 }
 
 // Pregnancy Tracker
@@ -289,6 +298,12 @@ function setupEventListeners() {
       handleWeightSubmit();
     }
   });
+  
+  // Notification settings
+  const notificationBtn = document.getElementById('notification-settings-btn');
+  if (notificationBtn) {
+    notificationBtn.addEventListener('click', handleNotificationPermissionRequest);
+  }
 }
 
 // Notes List
@@ -608,6 +623,42 @@ function loadWeightHistoryList() {
 function loadDailyTip() {
   const tip = getDailyTip();
   document.querySelector('.tip').textContent = tip;
+}
+
+// Notification Settings
+function loadNotificationSettings() {
+  const notificationBtn = document.getElementById('notification-settings-btn');
+  if (!notificationBtn) return;
+  
+  const status = getNotificationStatus();
+  
+  // Update button text and state
+  notificationBtn.textContent = status.message;
+  
+  if (status.permission === 'granted') {
+    notificationBtn.classList.add('active');
+    notificationBtn.disabled = false;
+  } else if (status.permission === 'denied') {
+    notificationBtn.classList.remove('active');
+    notificationBtn.disabled = true;
+  } else if (status.permission === 'default') {
+    notificationBtn.classList.remove('active');
+    notificationBtn.disabled = false;
+  } else {
+    notificationBtn.disabled = true;
+  }
+}
+
+async function handleNotificationPermissionRequest() {
+  const permission = await requestNotificationPermission();
+  
+  if (permission === 'granted') {
+    alert('✓ Notifications activées ! Vous recevrez des rappels pour vos rendez-vous.');
+  } else if (permission === 'denied') {
+    alert('❌ Notifications refusées. Vous pouvez les activer dans les paramètres de votre navigateur.');
+  }
+  
+  loadNotificationSettings();
 }
 
 // Delete handlers (exposed globally for inline onclick)

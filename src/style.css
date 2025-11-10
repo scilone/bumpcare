@@ -192,6 +192,31 @@ button {
   background: var(--border-color);
 }
 
+.secondary-btn.active {
+  background: #D4EDDA;
+  color: #155724;
+  border-color: #C3E6CB;
+}
+
+.secondary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Notification settings */
+.notification-settings {
+  text-align: center;
+}
+
+.notification-settings p {
+  margin-bottom: 1rem;
+}
+
+#notification-settings-btn {
+  width: 100%;
+  max-width: 300px;
+}
+
 /* Inputs */
 input[type="text"],
 input[type="date"],
