@@ -120,6 +120,8 @@ export function getPregnancyInfoForWeek(weekStart) {
   };
 }
 
+import { formatDate } from './i18n/index.js';
+
 // Format date range for display
 export function formatWeekRange(startDate, endDate) {
   const start = new Date(startDate);
@@ -130,7 +132,7 @@ export function formatWeekRange(startDate, endDate) {
   const endDay = end.getDate().toString().padStart(2, '0');
   const endMonth = (end.getMonth() + 1).toString().padStart(2, '0');
   
-  const monthName = start.toLocaleDateString('fr-FR', { month: 'long' });
+  const monthName = formatDate(start, { month: 'long' });
   const year = start.getFullYear();
   
   return {
