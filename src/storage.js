@@ -7,7 +7,8 @@ const STORAGE_KEYS = {
   APPOINTMENTS: 'bumpcare_appointments',
   WEIGHT_HISTORY: 'bumpcare_weight',
   SETTINGS: 'bumpcare_settings',
-  ONBOARDING_COMPLETE: 'bumpcare_onboarding_complete'
+  ONBOARDING_COMPLETE: 'bumpcare_onboarding_complete',
+  NOTIFICATIONS_ENABLED: 'bumpcare_notifications_enabled'
 };
 
 // Generic storage functions
@@ -164,6 +165,17 @@ export function isOnboardingComplete() {
 
 export function setOnboardingComplete() {
   return saveData(STORAGE_KEYS.ONBOARDING_COMPLETE, true);
+}
+
+// Notification Preferences
+export function saveNotificationPreference(enabled) {
+  return saveData(STORAGE_KEYS.NOTIFICATIONS_ENABLED, enabled);
+}
+
+export function loadNotificationPreference() {
+  const preference = loadData(STORAGE_KEYS.NOTIFICATIONS_ENABLED);
+  // Default to true if not set, so notifications are on by default if permission is granted
+  return preference === null ? true : preference;
 }
 
 // Clear all data (for testing or reset)

@@ -1,7 +1,7 @@
 // Notification Management for BumpCare
 // Handles browser notifications for appointment reminders
 
-import { loadAppointments } from './storage.js';
+import { loadAppointments, loadNotificationPreference } from './storage.js';
 
 // Check if notifications are supported
 export function isNotificationSupported() {
@@ -66,7 +66,7 @@ export function showNotification(title, options = {}) {
 
 // Check appointments and show notifications for upcoming ones
 export function checkUpcomingAppointments() {
-  if (Notification.permission !== 'granted') {
+  if (Notification.permission !== 'granted' || !loadNotificationPreference()) {
     return;
   }
   
@@ -136,13 +136,24 @@ export function getNotificationStatus() {
   }
   
   const permission = Notification.permission;
-  
+  const areNotificationsEnabled = loadNotificationPreference();
+
   if (permission === 'granted') {
-    return {
-      supported: true,
-      permission: 'granted',
-      message: 'Notifications activées ✓'
-    };
+    if (areNotificationsEnabled) {
+      return {
+        supported: true,
+        permission: 'granted',
+        enabled: true,
+        message: 'Désactiver les notifications'
+      };
+    } else {
+      return {
+        supported: true,
+        permission: 'granted',
+        enabled: false,
+        message: 'Activer les notifications'
+      };
+    }
   }
   
   if (permission === 'denied') {

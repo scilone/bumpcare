@@ -11,7 +11,9 @@ import {
   loadWeightHistory,
   addWeight,
   isOnboardingComplete,
-  setOnboardingComplete
+  setOnboardingComplete,
+  loadNotificationPreference,
+  saveNotificationPreference
 } from './storage.js';
 
 import {
@@ -37,7 +39,8 @@ import {
 import {
   initializeNotificationSystem,
   requestNotificationPermission,
-  getNotificationStatus
+  getNotificationStatus,
+  getNotificationPermission
 } from './notifications.js';
 
 import { Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, Filler } from 'chart.js';
@@ -636,28 +639,49 @@ function loadNotificationSettings() {
   notificationBtn.textContent = status.message;
   
   if (status.permission === 'granted') {
-    notificationBtn.classList.add('active');
     notificationBtn.disabled = false;
+    if (status.enabled) {
+      notificationBtn.classList.add('active');
+    } else {
+      notificationBtn.classList.remove('active');
+    }
   } else if (status.permission === 'denied') {
-    notificationBtn.classList.remove('active');
     notificationBtn.disabled = true;
-  } else if (status.permission === 'default') {
     notificationBtn.classList.remove('active');
-    notificationBtn.disabled = false;
-  } else {
-    notificationBtn.disabled = true;
+  } else { // default or unsupported
+    notificationBtn.disabled = !status.supported;
+    notificationBtn.classList.remove('active');
   }
 }
 
 async function handleNotificationPermissionRequest() {
-  const permission = await requestNotificationPermission();
-  
+  const permission = getNotificationPermission();
+
   if (permission === 'granted') {
-    alert('✓ Notifications activées ! Vous recevrez des rappels pour vos rendez-vous.');
+    // Toggle the preference
+    const areNotificationsEnabled = loadNotificationPreference();
+    saveNotificationPreference(!areNotificationsEnabled);
+    if (!areNotificationsEnabled) {
+      alert('✓ Notifications réactivées !');
+    } else {
+      alert('Notifications désactivées. Vous ne recevrez plus de rappels.');
+    }
   } else if (permission === 'denied') {
-    alert('❌ Notifications refusées. Vous pouvez les activer dans les paramètres de votre navigateur.');
+    alert('❌ Notifications bloquées. Vous devez les autoriser dans les paramètres de votre navigateur.');
+    return;
+  } else {
+    // Request permission for the first time
+    const newPermission = await requestNotificationPermission();
+    if (newPermission === 'granted') {
+      saveNotificationPreference(true);
+      alert('✓ Notifications activées ! Vous recevrez des rappels pour vos rendez-vous.');
+    } else if (newPermission === 'denied') {
+      // User denied permission, so we save the preference as false
+      saveNotificationPreference(false);
+      alert('❌ Notifications refusées. Vous pouvez les activer dans les paramètres de votre navigateur.');
+    }
   }
-  
+
   loadNotificationSettings();
 }
 
