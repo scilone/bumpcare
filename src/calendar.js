@@ -36,8 +36,10 @@ export function getWeeksInYear() {
   let weekCounter = 1;
   while (currentDate <= dueDate) {
     const weekStart = new Date(currentDate);
+    weekStart.setHours(0, 0, 0, 0);
     const weekEnd = new Date(currentDate);
     weekEnd.setDate(weekEnd.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
     
     weeks.push({
       weekNumber: weekCounter,
