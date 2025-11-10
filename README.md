@@ -7,6 +7,7 @@ BumpCare est une Progressive Web App (PWA) conçue pour accompagner les femmes e
 - **Suivi de grossesse** : Calcul automatique de la semaine de grossesse et du nombre de jours restants
 - **Notes personnelles** : Conservez vos pensées, symptômes et questions
 - **Gestion des rendez-vous** : Planifiez et suivez vos rendez-vous médicaux
+- **Rappels de rendez-vous** : Recevez des notifications 24h et 1h avant vos rendez-vous
 - **Suivi du poids** : Enregistrez votre évolution de poids
 - **Conseils quotidiens** : Recevez des conseils adaptés chaque jour
 - **Fonctionnement hors ligne** : Toutes les fonctionnalités sont disponibles sans connexion Internet
@@ -116,7 +117,7 @@ ISC
 
 ## 🌟 Feuille de Route
 
-- [ ] Rappels/notifications pour les rendez-vous
+- [x] Rappels/notifications pour les rendez-vous
 - [ ] Mode sombre
 - [ ] Support multilingue
 - [ ] Calculateur de contractions
