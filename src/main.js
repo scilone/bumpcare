@@ -364,10 +364,16 @@ function loadCalendarView() {
   
   calendarGrid.innerHTML = weeks.map(week => {
     const isCurrentWeek = now >= week.startDate && now <= week.endDate;
+    const isPastWeek = now > week.endDate;
     const hasAppointments = weekHasAppointments(week.startDate, week.endDate);
     
     let classes = 'calendar-week';
-    if (isCurrentWeek) classes += ' current-week';
+    if (isCurrentWeek) {
+      classes += ' current-week';
+    } else if (isPastWeek) {
+      classes += ' past-week';
+    }
+    
     if (hasAppointments) classes += ' has-appointments';
     
     const monthName = week.startDate.toLocaleDateString('fr-FR', { month: 'short' });
