@@ -58,9 +58,9 @@ export default {
   
   // Preparation section
   maternityPreparation: "🧳 Vorbereitung für die Entbindungsklinik",
-  maternityDescription: "Checkliste der wichtigsten Dinge für Ihren Krankenhausaufenthalt",
+  maternityDescription: "Liste der wichtigsten Dinge für Ihren Krankenhausaufenthalt",
   babyArrival: "🏠 Ankunft des Babys zu Hause",
-  babyArrivalDescription: "Checkliste der wichtigsten Dinge, um das Baby zu Hause willkommen zu heißen",
+  babyArrivalDescription: "Liste der wichtigsten Dinge, um das Baby zu Hause willkommen zu heißen",
   addCustomItem: "Benutzerdefinierten Artikel hinzufügen...",
   confirmDeleteItem: "Diesen Artikel aus der Liste löschen?",
   
@@ -102,6 +102,7 @@ export default {
   
   // Date formatting
   at: "um",
+  inTheDay: "tagsüber",
   
   // Notifications alerts
   notificationsReactivated: "✓ Benachrichtigungen reaktiviert!",
@@ -109,6 +110,11 @@ export default {
   notificationsBlockedAlert: "❌ Benachrichtigungen blockiert. Sie müssen sie in Ihren Browsereinstellungen zulassen.",
   notificationsActivated: "✓ Benachrichtigungen aktiviert! Sie erhalten Erinnerungen für Ihre Termine.",
   notificationsRefused: "❌ Benachrichtigungen abgelehnt. Sie können sie in Ihren Browsereinstellungen aktivieren.",
+  notificationsNotSupported: "Benachrichtigungen werden von Ihrem Browser nicht unterstützt.",
+  notificationsBlockedMessage: "Benachrichtigungen blockiert. Bitte erlauben Sie sie in Ihren Browsereinstellungen.",
+  clickToEnableNotifications: "Klicken, um Benachrichtigungen zu aktivieren",
+  reminderTomorrow: "Erinnerung: Termin morgen",
+  reminderHour: "Erinnerung: Termin in 1 Stunde",
   
   // Checklist default items
   checklistMaternity: [
@@ -174,7 +180,7 @@ export default {
   ],
   
   // Baby development by week (42 weeks)
-  babyDevelopment: [
+  babyDevelopmentByWeek: [
     "Beginn der Schwangerschaft. Die Befruchtung kann diese Woche stattfinden.",
     "Die befruchtete Eizelle teilt sich und beginnt ihre Reise zur Gebärmutter.",
     "Der Embryo nistet sich in der Gebärmutterwand ein. Ihre Schwangerschaftshormone beginnen zu steigen.",

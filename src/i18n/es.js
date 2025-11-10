@@ -58,7 +58,7 @@ export default {
   
   // Preparation section
   maternityPreparation: "🧳 Preparación para la Maternidad",
-  maternityDescription: "Lista de esenciales para preparar tu estancia en la maternidad",
+  maternityDescription: "Lista de esenciales para preparar tu estancia en el hospital",
   babyArrival: "🏠 Llegada del Bebé a Casa",
   babyArrivalDescription: "Lista de esenciales para recibir al bebé en casa",
   addCustomItem: "Añadir un artículo personalizado...",
@@ -102,6 +102,7 @@ export default {
   
   // Date formatting
   at: "a las",
+  inTheDay: "durante el día",
   
   // Notifications alerts
   notificationsReactivated: "✓ ¡Notificaciones reactivadas!",
@@ -109,6 +110,11 @@ export default {
   notificationsBlockedAlert: "❌ Notificaciones bloqueadas. Debes permitirlas en la configuración de tu navegador.",
   notificationsActivated: "✓ ¡Notificaciones activadas! Recibirás recordatorios para tus citas.",
   notificationsRefused: "❌ Notificaciones rechazadas. Puedes activarlas en la configuración de tu navegador.",
+  notificationsNotSupported: "Las notificaciones no son compatibles con tu navegador.",
+  notificationsBlockedMessage: "Notificaciones bloqueadas. Por favor, permítelas en la configuración de tu navegador.",
+  clickToEnableNotifications: "Haz clic para activar las notificaciones",
+  reminderTomorrow: "Recordatorio: Cita mañana",
+  reminderHour: "Recordatorio: Cita en 1 hora",
   
   // Checklist default items
   checklistMaternity: [
@@ -174,7 +180,7 @@ export default {
   ],
   
   // Baby development by week (42 weeks)
-  babyDevelopment: [
+  babyDevelopmentByWeek: [
     "Inicio del embarazo. La fecundación puede ocurrir esta semana.",
     "El óvulo fecundado se divide y comienza su viaje al útero.",
     "El embrión se implanta en la pared uterina. Tus hormonas del embarazo comienzan a aumentar.",

@@ -58,9 +58,9 @@ export default {
   
   // Preparation section
   maternityPreparation: "🧳 Maternity Preparation",
-  maternityDescription: "Checklist of essentials to prepare for your maternity stay",
+  maternityDescription: "List of essentials to prepare for your hospital stay",
   babyArrival: "🏠 Baby's Arrival at Home",
-  babyArrivalDescription: "Checklist of essentials to welcome baby at home",
+  babyArrivalDescription: "List of essentials for welcoming baby home",
   addCustomItem: "Add a custom item...",
   confirmDeleteItem: "Delete this item from the list?",
   
@@ -102,13 +102,19 @@ export default {
   
   // Date formatting
   at: "at",
-  
+  inTheDay: "during the day",
+
   // Notifications alerts
   notificationsReactivated: "✓ Notifications reactivated!",
   notificationsDeactivated: "Notifications disabled. You will no longer receive reminders.",
   notificationsBlockedAlert: "❌ Notifications blocked. You must allow them in your browser settings.",
   notificationsActivated: "✓ Notifications enabled! You will receive reminders for your appointments.",
   notificationsRefused: "❌ Notifications refused. You can enable them in your browser settings.",
+  notificationsNotSupported: "Notifications are not supported by your browser.",
+  notificationsBlockedMessage: "Notifications blocked. Please allow them in your browser settings.",
+  clickToEnableNotifications: "Click to enable notifications",
+  reminderTomorrow: "Reminder: Appointment tomorrow",
+  reminderHour: "Reminder: Appointment in 1 hour",
   
   // Checklist default items
   checklistMaternity: [
@@ -174,7 +180,7 @@ export default {
   ],
   
   // Baby development by week (42 weeks)
-  babyDevelopment: [
+  babyDevelopmentByWeek: [
     "Start of pregnancy. Fertilization may occur this week.",
     "The fertilized egg divides and begins its journey to the uterus.",
     "The embryo implants in the uterine wall. Your pregnancy hormones begin to rise.",

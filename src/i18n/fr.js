@@ -102,6 +102,7 @@ export default {
   
   // Date formatting
   at: "à",
+  inTheDay: "dans la journée",
   
   // Notifications alerts
   notificationsReactivated: "✓ Notifications réactivées !",
@@ -109,6 +110,11 @@ export default {
   notificationsBlockedAlert: "❌ Notifications bloquées. Vous devez les autoriser dans les paramètres de votre navigateur.",
   notificationsActivated: "✓ Notifications activées ! Vous recevrez des rappels pour vos rendez-vous.",
   notificationsRefused: "❌ Notifications refusées. Vous pouvez les activer dans les paramètres de votre navigateur.",
+  notificationsNotSupported: "Les notifications ne sont pas supportées par votre navigateur.",
+  notificationsBlockedMessage: "Notifications bloquées. Autorisez-les dans les paramètres du navigateur.",
+  clickToEnableNotifications: "Cliquez pour activer les notifications",
+  reminderTomorrow: "Rappel : Rendez-vous demain",
+  reminderHour: "Rappel : Rendez-vous dans 1 heure",
   
   // Checklist default items
   checklistMaternity: [
@@ -174,7 +180,7 @@ export default {
   ],
   
   // Baby development by week (42 weeks)
-  babyDevelopment: [
+  babyDevelopmentByWeek: [
     "Début de la grossesse. La fécondation peut avoir lieu cette semaine.",
     "L'ovule fécondé se divise et commence son voyage vers l'utérus.",
     "L'embryon s'implante dans la paroi utérine. Vos hormones de grossesse commencent à augmenter.",

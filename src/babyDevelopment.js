@@ -4,6 +4,6 @@
 import { getTranslationArray } from './i18n/index.js';
 
 export function getBabyDevelopment(week) {
-  const developments = getTranslationArray('babyDevelopment');
+  const developments = getTranslationArray('babyDevelopmentByWeek');
   return developments[week - 1] || developments[0] || "Baby continues developing.";
 }

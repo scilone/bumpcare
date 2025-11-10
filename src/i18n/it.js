@@ -102,6 +102,7 @@ export default {
   
   // Date formatting
   at: "alle",
+  inTheDay: "durante il giorno",
   
   // Notifications alerts
   notificationsReactivated: "✓ Notifiche riattivate!",
@@ -109,6 +110,11 @@ export default {
   notificationsBlockedAlert: "❌ Notifiche bloccate. Devi autorizzarle nelle impostazioni del browser.",
   notificationsActivated: "✓ Notifiche attivate! Riceverai promemoria per i tuoi appuntamenti.",
   notificationsRefused: "❌ Notifiche rifiutate. Puoi attivarle nelle impostazioni del browser.",
+  notificationsNotSupported: "Le notifiche non sono supportate dal tuo browser.",
+  notificationsBlockedMessage: "Notifiche bloccate. Per favore, autorizzale nelle impostazioni del tuo browser.",
+  clickToEnableNotifications: "Clicca per attivare le notifiche",
+  reminderTomorrow: "Promemoria: Appuntamento domani",
+  reminderHour: "Promemoria: Appuntamento tra 1 ora",
   
   // Checklist default items
   checklistMaternity: [
@@ -174,7 +180,7 @@ export default {
   ],
   
   // Baby development by week (42 weeks)
-  babyDevelopment: [
+  babyDevelopmentByWeek: [
     "Inizio della gravidanza. La fecondazione può avvenire questa settimana.",
     "L'ovulo fecondato si divide e inizia il suo viaggio verso l'utero.",
     "L'embrione si impianta nella parete uterina. I tuoi ormoni della gravidanza iniziano ad aumentare.",
