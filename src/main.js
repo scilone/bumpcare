@@ -358,15 +358,22 @@ function loadUpcomingAppointments() {
 // Calendar View
 function loadCalendarView() {
   const weeks = getWeeksInYear();
-  const currentWeek = getCurrentWeek();
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
   const calendarGrid = document.querySelector('.calendar-grid');
   
   calendarGrid.innerHTML = weeks.map(week => {
-    const isCurrentWeek = week.weekNumber === currentWeek.weekNumber;
+    const isCurrentWeek = now >= week.startDate && now <= week.endDate;
+    const isPastWeek = now > week.endDate;
     const hasAppointments = weekHasAppointments(week.startDate, week.endDate);
     
     let classes = 'calendar-week';
-    if (isCurrentWeek) classes += ' current-week';
+    if (isCurrentWeek) {
+      classes += ' current-week';
+    } else if (isPastWeek) {
+      classes += ' past-week';
+    }
+    
     if (hasAppointments) classes += ' has-appointments';
     
     const monthName = week.startDate.toLocaleDateString('fr-FR', { month: 'short' });
