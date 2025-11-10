@@ -891,6 +891,85 @@ footer {
   vertical-align: middle; /* Ensure vertical alignment */
 }
 
+/* Language Selector */
+.language-selector {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+}
+
+.lang-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.lang-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  min-width: 180px;
+  z-index: 101;
+}
+
+.lang-dropdown.hidden {
+  display: none;
+}
+
+.lang-option {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: white;
+  color: var(--text-dark);
+  text-align: left;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lang-option:hover {
+  background: var(--bg-light);
+}
+
+.lang-option.active {
+  background: var(--accent-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.lang-option:not(:last-child) {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Make header position relative for absolute positioning */
+header {
+  position: relative;
+}
+
 /* Print styles */
 @media print {
   header, footer {
@@ -899,5 +978,9 @@ footer {
   
   .card {
     page-break-inside: avoid;
+  }
+  
+  .language-selector {
+    display: none;
   }
 }
